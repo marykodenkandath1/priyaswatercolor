@@ -62,13 +62,8 @@
         <h2 id="request-h">Request a commission</h2>
         <p class="muted">It takes about 5 minutes. Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
 
-        <form id="commission-form" class="form-card card-edge" method="POST" enctype="multipart/form-data" novalidate>
-          <!-- Delivery settings for FormSubmit (formsubmit.co). action, _next and _url are filled in by js/app.js. -->
-          <input type="hidden" name="_subject" value="New commission request">
+        <form id="commission-form" class="form-card card-edge" novalidate>
           <input type="hidden" name="size" value="">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_next" value="">
-          <input type="hidden" name="_url" value="">
           <div class="error-summary" data-error-summary tabindex="-1" role="alert" hidden></div>
 
           <fieldset class="form-section">
@@ -133,13 +128,6 @@
               <p class="fine error" data-file-note aria-live="polite"></p>
               <ul class="files" data-files></ul>
               <p class="error" id="photos-error"></p>
-              <div class="attachments" hidden>
-                <input type="file" name="attachment1" tabindex="-1" aria-hidden="true">
-                <input type="file" name="attachment2" tabindex="-1" aria-hidden="true">
-                <input type="file" name="attachment3" tabindex="-1" aria-hidden="true">
-                <input type="file" name="attachment4" tabindex="-1" aria-hidden="true">
-                <input type="file" name="attachment5" tabindex="-1" aria-hidden="true">
-              </div>
             </div>
           </fieldset>
 
@@ -201,7 +189,7 @@
 
           <div class="hp" aria-hidden="true">
             <label for="honey">Leave this field empty</label>
-            <input type="text" id="honey" name="_honey" tabindex="-1" autocomplete="off">
+            <input type="text" id="honey" name="website" tabindex="-1" autocomplete="off">
           </div>
 
           <div class="field" data-field="terms">

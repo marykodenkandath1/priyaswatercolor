@@ -12,9 +12,11 @@
 
 const SITE = {
   name: "Priya Watercolors",
-  // Contact links open an email to this address, and the house-portrait
-  // form is delivered here by FormSubmit (see OWNER-NOTES.md).
+  // Contact links open an email to this address.
   email: "priyaswatercolors@gmail.com",
+  // Web app URL of the Google Apps Script that saves commission requests to
+  // Priya's Google Sheet and emails them to her. Setup: OWNER-NOTES.md.
+  commissionFormUrl: "",
   instagram: "https://instagram.com/priyaswatercolors",
   instagramHandle: "@priyaswatercolors",
   portraitPhoto: "", // PLACEHOLDER: photo of Priya, e.g. "images/priya.jpg"

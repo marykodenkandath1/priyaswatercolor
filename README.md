@@ -19,7 +19,7 @@ Then open http://localhost:8765.
 
 | Part | Status |
 | --- | --- |
-| Commission request form | **Real.** Delivered by [FormSubmit](https://formsubmit.co) to priyaswatercolors@gmail.com with the photos attached. Needs a one-time activation (see owner notes). |
+| Commission request form | **Real once connected.** Sent to a Google Apps Script (`google-apps-script/Code.gs`) in Priya's account, which adds a row to her Google Sheet, saves the photos to her Drive and emails her the request. Needs a one-time setup (see owner notes). |
 | Contact | **Real.** "Contact" and footer links open an email to priyaswatercolors@gmail.com. |
 | Shop, cart and checkout | **Simulated.** "Simulate a successful order" only reduces stock in the visitor's own browser. Real payments need a hosted checkout (for example Shopify, per the PRD). |
 | Artwork and prices | **Placeholders**, all in `js/data.js`. |
@@ -40,7 +40,8 @@ Then open http://localhost:8765.
 | Path | What it is |
 | --- | --- |
 | `js/data.js` | All editable content: print sizes and prices, commission types and prices, stock, photos, email, turnaround, shipping |
-| `js/app.js` | Shared header and footer, shop, cart, commission form and its FormSubmit delivery |
+| `js/app.js` | Shared header and footer, shop, cart, commission form and sending it |
+| `google-apps-script/Code.gs` | Runs in Priya's Google Sheet: saves requests, photos and sends the email |
 | `css/styles.css` | Styles, including the gingham patterns |
 | `images/` | Real photos go here (see `images/README.md`) |
 | `index.html` | Home |

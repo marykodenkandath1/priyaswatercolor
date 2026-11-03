@@ -3,26 +3,63 @@
 Plain-language notes for keeping the site up to date. Almost everything lives in one file,
 **`js/data.js`**. Search it for `PLACEHOLDER` to find every value that still needs a real one.
 
-## Turn on the commission form (one time)
+## Connect the commission form to Google (one time, about 10 minutes)
 
-The request form is emailed to **priyaswatercolors@gmail.com** by FormSubmit, a free
-service. Nothing needs to run on a server.
+Each request from the commissions page goes to a small Google script that runs in
+Priya's Google account. For every request it:
 
-1. Once the site is online, send one test request through the form yourself.
-2. FormSubmit emails priyaswatercolors@gmail.com an **activation** message. Check the spam
-   folder too. Click the button in it.
-3. Every request after that arrives as an email titled "New commission request", with
-   the reference photos attached. Reply to it directly to answer the customer.
+- adds a row to a Google Sheet, with a **Status** column (New, Price confirmed, Painting,
+  Finished, Paid, Shipped / delivered, Declined) and a **Notes** column for Priya;
+- saves the reference photos to a private Google Drive folder, "Priya Watercolors -
+  commission photos", and links it from the row;
+- emails priyaswatercolors@gmail.com the full request with the photos attached. Replying
+  to that email goes straight to the customer.
+
+Until this is set up, the form shows "Sorry, your request didn't send" with Priya's email
+address, so nothing is lost silently.
+
+**Steps** (signed in as priyaswatercolors@gmail.com):
+
+1. Go to [sheets.new](https://sheets.new) to create a blank Google Sheet. Name it
+   **Commission requests**.
+2. In the sheet, open **Extensions → Apps Script**.
+3. Delete the sample code in `Code.gs`, paste in everything from
+   `google-apps-script/Code.gs` in this repo, and click **Save** (the disk icon).
+4. In the function menu next to **Run**, choose **setup**, then click **Run**. Google asks
+   for permission:
+   - **Review permissions** → choose priyaswatercolors@gmail.com.
+   - "Google hasn't verified this app" is expected, because it's your own script. Click
+     **Advanced → Go to (project name) (unsafe)** → **Allow**.
+   - The script asks to manage your spreadsheets, Drive files and send email as you,
+     which is exactly what it does.
+
+   Back in the sheet, a **Requests** tab now has the column headers.
+5. Click **Deploy → New deployment**. Click the gear next to "Select type" and choose
+   **Web app**. Set:
+   - Description: `Commission form`
+   - Execute as: **Me (priyaswatercolors@gmail.com)**
+   - Who has access: **Anyone** (so website visitors can send requests; they can't see
+     the sheet)
+
+   Click **Deploy** and copy the **Web app URL**. It ends in `/exec`.
+6. Open the URL in a browser tab. It should say "Priya Watercolors commission form is
+   connected."
+7. Put the URL into `js/data.js` as `commissionFormUrl: "https://script.google.com/.../exec",`,
+   then commit and push. Or paste it to Claude and it will do this for you.
+8. Send one test request from the live site and check the sheet, the Drive folder and
+   the email.
+
+**If you change `Code.gs` later**, paste the new version and redeploy: **Deploy → Manage
+deployments → pencil icon → Version: New version → Deploy**. The URL stays the same.
 
 Good to know:
 
-- Customers may see a quick "I'm not a robot" check after pressing Send. That is
-  FormSubmit's spam protection.
-- Photos can add up to **10 MB in total** per request (FormSubmit's limit). The form
-  enforces this and tells people when a photo is too big.
-- Optional: after activation, FormSubmit offers a random address (like
-  `formsubmit.co/abc123...`) that hides the Gmail address from the page's code. To use it,
-  replace `SITE.email` in the `form.action` line of `js/app.js`.
+- Photos can add up to **10 MB in total** per request. The form enforces this and tells
+  people when a photo is too big.
+- A free Google account can send about 100 emails a day from scripts, far more than
+  needed.
+- To stop the form, set `SITE.commissions.open: false` in `js/data.js`. To fully
+  disconnect, Deploy → Manage deployments → Archive.
 
 ## Common changes
 

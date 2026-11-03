@@ -998,16 +998,18 @@
       summary.hidden = true;
 
       // Honeypot: real people never fill this hidden field (F11).
-      if (el("_honey").value) {
+      if (el("website").value) {
         location.href = "commission-thanks.html";
         return;
       }
 
-      session.set("pw-commission", {
+      const t = COMMISSION_TYPES.find((x) => x.label === el("type").value);
+      const request = {
         name: el("name").value.trim(),
         email: el("email").value.trim(),
         phone: el("phone").value.trim(),
         type: el("type").value,
+        price: t ? commissionPrice(t) + (t.price ? "" : " depending on detail") : "",
         address: el("address").disabled ? "" : el("address").value.trim(),
         description: el("description").value.trim(),
         photos: files.map((f) => f.file.name),
@@ -1021,25 +1023,55 @@
         heard: el("heard").value,
         sharePublicly: el("share").checked,
         sentOn: new Date().toISOString(),
-      });
-      sendToFormSubmit();
+      };
+      sendRequest(request);
     });
 
-    // FormSubmit (formsubmit.co) emails the form, photos attached, to SITE.email.
-    // It reads ordinary named fields, so each photo goes in its own file input.
-    function sendToFormSubmit() {
-      form.action = `https://formsubmit.co/${SITE.email}`;
-      el("_next").value = new URL("commission-thanks.html", location.href).href;
-      el("_url").value = location.href;
-      $$(".attachments input", form).forEach((slot, i) => {
-        const dt = new DataTransfer();
-        if (files[i]) dt.items.add(files[i].file);
-        slot.files = dt.files;
-        slot.disabled = !files[i];
+    const readBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
       });
-      $("[type=submit]", form).disabled = true;
+
+    // Sends the request, photos included, to Priya's Google Apps Script
+    // (google-apps-script/Code.gs), which fills her sheet and emails her.
+    async function sendRequest(request) {
+      const button = $("[type=submit]", form);
+      const summary = $("[data-error-summary]");
+      const fail = (why) => {
+        console.error("Commission request not sent:", why);
+        button.disabled = false;
+        button.textContent = "Send my request";
+        summary.hidden = false;
+        summary.innerHTML = `<h2 class="error-summary-title">Sorry, your request didn't send</h2>
+          <p>Please try again in a minute. If it still doesn't work, email your photos and details to
+          <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>`;
+        summary.focus();
+      };
+
+      if (!SITE.commissionFormUrl) return fail("SITE.commissionFormUrl is not set in js/data.js");
+
+      button.disabled = true;
+      button.textContent = "Sending…";
       announce("Sending your request");
-      form.submit();
+      try {
+        const photos = await Promise.all(
+          files.map(async ({ file }) => ({ name: file.name, type: file.type, data: await readBase64(file) }))
+        );
+        // A plain-text body keeps this a "simple" request, which Apps Script accepts without CORS preflight.
+        const res = await fetch(SITE.commissionFormUrl, {
+          method: "POST",
+          body: JSON.stringify({ ...request, photos, honey: "" }),
+        });
+        const reply = await res.json();
+        if (!reply.ok) return fail(reply.error);
+      } catch (err) {
+        return fail(err);
+      }
+      session.set("pw-commission", request);
+      location.href = "commission-thanks.html";
     }
   }
 
