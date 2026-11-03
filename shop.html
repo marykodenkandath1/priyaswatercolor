@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop watercolor prints | Priya Watercolors</title>
+  <meta name="description" content="Limited-run prints of Priya's watercolors: Martini, Flatiron, Texas Stadium and Oysters. Only 6 of each.">
+  <meta property="og:title" content="Shop watercolor prints | Priya Watercolors">
+  <meta property="og:description" content="Limited-run prints of Priya's watercolors: Martini, Flatiron, Texas Stadium and Oysters. Only 6 of each.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="shop">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>Prints</h1>
+        <p>Prints of four of Priya's watercolors, in runs of just 6 each. When they're gone, they're gone.</p>
+      </div>
+
+      <div class="controls">
+        <div class="control">
+          <label for="filter-availability">Show</label>
+          <select id="filter-availability">
+            <option value="all">All prints</option>
+            <option value="available">In stock</option>
+            <option value="sold">Sold out</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="sort">Sort by</label>
+          <select id="sort">
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+          </select>
+        </div>
+        <p class="results" data-results role="status"></p>
+      </div>
+
+      <ul class="grid grid-4" data-gallery></ul>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

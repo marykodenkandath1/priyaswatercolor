@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watercolor house portraits | Priya Watercolors</title>
+  <meta name="description" content="Commission a hand-painted watercolor portrait of your house. Ready about 2 weeks after you send the form, with nothing to pay up front.">
+  <meta property="og:title" content="Watercolor house portraits | Priya Watercolors">
+  <meta property="og:description" content="Commission a hand-painted watercolor portrait of your house. Ready about 2 weeks after you send the form, with nothing to pay up front.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="commissions">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>House portraits</h1>
+        <p>A hand-painted watercolor of your home, painted from your photos. A lovely gift for a first home, a family house or a place you're saying goodbye to.</p>
+        <p class="booking" data-booking role="note"></p>
+      </div>
+    </div>
+
+    <section class="section-tight" aria-labelledby="how-h">
+      <div class="wrap">
+        <h2 id="how-h">How it works</h2>
+        <ol class="steps">
+          <li><h3>Send the form</h3><p>Share a few photos of the house, the size you'd like and your budget.</p></li>
+          <li><h3>Priya confirms</h3><p>She replies with a quote and any questions, usually within 3 business days.</p></li>
+          <li><h3>She paints it</h3><p>Your painting is ready about <span data-turnaround></span> after you send the form.</p></li>
+          <li><h3>You pay</h3><p>No deposit. You get a secure payment link once your painting is finished.</p></li>
+          <li><h3>It ships</h3><p>Packed flat with rigid backing and shipped within the US.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section-tight" aria-labelledby="pricing-h">
+      <div class="wrap narrow">
+        <h2 id="pricing-h">Pricing guide</h2>
+        <table class="pricing">
+          <thead><tr><th scope="col">Size</th><th scope="col">Starting price</th></tr></thead>
+          <tbody data-pricing></tbody>
+        </table>
+        <p class="fine muted">[Placeholder prices. Priya to confirm.] Priya paints house portraits up to <span data-max-size></span>. Starting prices are for one house on a simple background. Extra detail such as gardens, people, pets or cars adds to the price, and Priya will include it in your quote.</p>
+      </div>
+    </section>
+
+    <section class="section-tight" aria-labelledby="examples-h">
+      <div class="wrap">
+        <h2 id="examples-h">Past house portraits</h2>
+        <ul class="examples" data-examples></ul>
+      </div>
+    </section>
+
+    <section class="section" id="request" aria-labelledby="request-h">
+      <div class="wrap narrow" data-form-wrap>
+        <h2 id="request-h">Request a house portrait</h2>
+        <p class="muted">It takes about 5 minutes. Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
+
+        <form id="commission-form" class="form-card card-edge" method="POST" enctype="multipart/form-data" novalidate>
+          <!-- Delivery settings for FormSubmit (formsubmit.co). action, _next and _url are filled in by js/app.js. -->
+          <input type="hidden" name="_subject" value="New house portrait request">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="">
+          <input type="hidden" name="_url" value="">
+          <div class="error-summary" data-error-summary tabindex="-1" role="alert" hidden></div>
+
+          <fieldset class="form-section">
+            <legend>About you</legend>
+            <div class="field" data-field="name">
+              <label for="name">Name <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="name" name="name" autocomplete="name" required aria-describedby="name-error">
+              <p class="error" id="name-error"></p>
+            </div>
+            <div class="row-2">
+              <div class="field" data-field="email">
+                <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required aria-describedby="email-error">
+                <p class="error" id="email-error"></p>
+              </div>
+              <div class="field">
+                <label for="phone">Phone <span class="opt">(optional)</span></label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>The house</legend>
+
+            <div class="field">
+              <label for="address">House address or neighborhood <span class="opt">(optional)</span></label>
+              <p class="hint" id="address-hint">Helps Priya look the house up if a detail isn't clear in your photos. It's never shared.</p>
+              <input type="text" id="address" name="address" autocomplete="street-address" aria-describedby="address-hint">
+            </div>
+
+            <div class="field" data-field="description">
+              <label for="description">Tell Priya about the house <span class="req" aria-hidden="true">*</span></label>
+              <p class="hint" id="description-hint">What it means to you, the season or time of day you love it, and anything to include or leave out (cars, bins, a favorite tree).</p>
+              <textarea id="description" name="description" maxlength="1000" required aria-describedby="description-hint description-error"></textarea>
+              <p class="counter" data-count aria-live="polite"></p>
+              <p class="error" id="description-error"></p>
+            </div>
+
+            <div class="field" data-field="photos">
+              <span class="field-label" id="photos-label">Photos of the house <span class="req" aria-hidden="true">*</span></span>
+              <p class="hint" id="photos-hint">Up to 5 photos, JPG, PNG or HEIC, 10 MB in total. A straight-on daytime shot of the front works best.</p>
+              <div class="dropzone">
+                <input type="file" id="photos" accept=".jpg,.jpeg,.png,.heic,image/jpeg,image/png,image/heic" multiple aria-labelledby="photos-label" aria-describedby="photos-hint photos-error">
+                <p><strong>Choose photos</strong> or drag them here</p>
+                <p class="fine muted" data-file-count></p>
+              </div>
+              <p class="fine error" data-file-note aria-live="polite"></p>
+              <ul class="files" data-files></ul>
+              <p class="error" id="photos-error"></p>
+              <div class="attachments" hidden>
+                <input type="file" name="attachment1" tabindex="-1" aria-hidden="true">
+                <input type="file" name="attachment2" tabindex="-1" aria-hidden="true">
+                <input type="file" name="attachment3" tabindex="-1" aria-hidden="true">
+                <input type="file" name="attachment4" tabindex="-1" aria-hidden="true">
+                <input type="file" name="attachment5" tabindex="-1" aria-hidden="true">
+              </div>
+            </div>
+
+            <div class="field" data-field="size">
+              <fieldset>
+                <legend id="size-legend">Size <span class="req" aria-hidden="true">*</span></legend>
+                <p class="hint">Priya paints house portraits up to <span data-max-size></span>.</p>
+                <div class="chips" id="size-options"></div>
+              </fieldset>
+              <p class="error" id="size-error"></p>
+            </div>
+
+            <div class="field" data-field="budget">
+              <label for="budget">Budget <span class="req" aria-hidden="true">*</span></label>
+              <select id="budget" name="budget" required aria-describedby="budget-error"></select>
+              <p class="error" id="budget-error"></p>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Timing and delivery</legend>
+            <div class="field">
+              <label for="needed-by">Needed by <span class="opt">(optional, at least 2 weeks out)</span></label>
+              <input type="date" id="needed-by" name="needed-by">
+            </div>
+            <label class="check">
+              <input type="checkbox" id="gift" name="gift" value="Yes">
+              <span>This is a gift or for a special event</span>
+            </label>
+            <div class="field" data-occasion hidden>
+              <label for="occasion">What's the occasion? <span class="opt">(optional)</span></label>
+              <input type="text" id="occasion" name="occasion" placeholder="e.g. anniversary, wedding, birthday">
+            </div>
+            <div class="field">
+              <label for="framing">Framing <span class="opt">(optional)</span></label>
+              <select id="framing" name="framing">
+                <option value="">No preference</option>
+                <option>Unframed</option>
+                <option>Framed (please include in my quote)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="location">Where are you located? <span class="opt">(optional)</span></label>
+              <select id="location" name="location"></select>
+            </div>
+            <div class="field" data-dropoff hidden>
+              <fieldset>
+                <legend>Would you be open to Priya dropping it off next time she's in <span data-dropoff-place></span>? <span class="opt">(optional)</span></legend>
+                <div class="chips">
+                  <label class="chip"><input type="radio" name="dropoff" value="Yes"><span>Yes</span></label>
+                  <label class="chip"><input type="radio" name="dropoff" value="No"><span>No</span></label>
+                  <label class="chip"><input type="radio" name="dropoff" value="Maybe"><span>Maybe</span></label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="row-2">
+              <div class="field" data-field="zip">
+                <label for="zip">Shipping ZIP code <span class="opt">(optional, US only)</span></label>
+                <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" aria-describedby="zip-error">
+                <p class="error" id="zip-error"></p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="heard">How did you hear about Priya? <span class="opt">(optional)</span></label>
+              <select id="heard" name="heard">
+                <option value="">Choose one</option>
+                <option>Instagram</option>
+                <option>A friend or family member</option>
+                <option>An art market or event</option>
+                <option>Google search</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <div class="hp" aria-hidden="true">
+            <label for="honey">Leave this field empty</label>
+            <input type="text" id="honey" name="_honey" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="field" data-field="terms">
+            <label class="check">
+              <input type="checkbox" id="terms" name="terms" value="Agreed" required aria-describedby="terms-error">
+              <span>I agree to the <a href="faq.html#commission-terms" target="_blank" rel="noopener">commission terms</a> <span class="req" aria-hidden="true">*</span></span>
+            </label>
+            <p class="error" id="terms-error"></p>
+            <label class="check">
+              <input type="checkbox" id="share" name="share" value="Yes, Priya may share it">
+              <span>Priya may share photos of the finished painting on her website and Instagram <span class="opt">(optional)</span></span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-block">Send my request</button>
+          <p class="fine muted center">Nothing to pay now. You'll pay once your painting is finished.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
