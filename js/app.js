@@ -15,8 +15,18 @@
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
   const cm = (inches) => (Math.round(inches * 2.54 * 10) / 10).toString();
-  const sizeLabel = (p) => `${p.w} × ${p.h} in`;
-  const sizeLabelFull = (p) => `${p.w} × ${p.h} in (${cm(p.w)} × ${cm(p.h)} cm)`;
+
+  // Prints: every piece comes in the PRINT_SIZES, turned sideways for landscape work.
+  // p.w / p.h give the artwork's shape for the images (examples set them directly).
+  PRODUCTS.forEach((p) => Object.assign(p, p.orientation === "landscape" ? { w: 10, h: 8 } : { w: 8, h: 10 }));
+  const findSize = (id) => PRINT_SIZES.find((s) => s.id === id);
+  const printDims = (p, s) => (p.orientation === "landscape" ? { w: s.h, h: s.w } : { w: s.w, h: s.h });
+  const sizeLabel = (p, s) => { const d = printDims(p, s); return `${d.w} × ${d.h} in`; };
+  const sizeLabelFull = (p, s) => { const d = printDims(p, s); return `${d.w} × ${d.h} in (${cm(d.w)} × ${cm(d.h)} cm)`; };
+  const sizesLabel = (p) => PRINT_SIZES.map((s) => sizeLabel(p, s).replace(" in", "")).join(" or ") + " in";
+  const prices = PRINT_SIZES.map((s) => s.price);
+  const printPriceRange = `${money(Math.min(...prices))}–${money(Math.max(...prices))}`;
+  const commissionPrice = (t) => (t.price ? money(t.price) : `${money(t.min)}–${money(t.max)}`);
 
   // Browser storage is a convenience only; every read/write tolerates failure.
   function storage(kind) {
@@ -52,28 +62,50 @@
   const inStock = (p) => Math.max(0, p.stock - (soldCounts()[p.slug] || 0));
   const isSoldOut = (p) => inStock(p) === 0;
 
+  // Cart lines are keyed "slug|size"; both sizes of a piece share its stock.
+  const lineKey = (slug, sizeId) => `${slug}|${sizeId}`;
+  const parseKey = (key) => {
+    const [slug, sizeId] = key.split("|");
+    return { key, p: findProduct(slug), size: findSize(sizeId) };
+  };
+
   const cart = {
-    // { slug: quantity }, clamped to what is still in stock.
+    // { "slug|size": quantity }, clamped so each piece stays within its stock.
     lines() {
       const raw = local.get("pw-cart-lines", {});
       const lines = {};
-      Object.keys(raw).forEach((slug) => {
-        const p = findProduct(slug);
-        const qty = p ? Math.min(raw[slug], inStock(p)) : 0;
-        if (qty > 0) lines[slug] = qty;
+      const used = {};
+      Object.keys(raw).forEach((key) => {
+        const { p, size } = parseKey(key);
+        if (!p || !size) return;
+        const qty = Math.min(raw[key], inStock(p) - (used[p.slug] || 0));
+        if (qty > 0) {
+          lines[key] = qty;
+          used[p.slug] = (used[p.slug] || 0) + qty;
+        }
       });
       return lines;
     },
-    qty(slug) {
-      return this.lines()[slug] || 0;
+    items() {
+      const lines = this.lines();
+      return Object.keys(lines).map((key) => ({ ...parseKey(key), qty: lines[key] }));
+    },
+    qty(key) {
+      return this.lines()[key] || 0;
+    },
+    // How many of a piece are in the cart, across both sizes.
+    qtyOf(slug) {
+      return this.items().filter((i) => i.p.slug === slug).reduce((n, i) => n + i.qty, 0);
     },
     count() {
       return Object.values(this.lines()).reduce((a, b) => a + b, 0);
     },
-    set(slug, qty) {
+    set(key, qty) {
       const lines = this.lines();
-      if (qty > 0) lines[slug] = Math.min(qty, inStock(findProduct(slug)));
-      else delete lines[slug];
+      delete lines[key];
+      const { p } = parseKey(key);
+      const room = inStock(p) - Object.keys(lines).filter((k) => k.startsWith(p.slug + "|")).reduce((n, k) => n + lines[k], 0);
+      if (qty > 0 && room > 0) lines[key] = Math.min(qty, room);
       local.set("pw-cart-lines", lines);
       updateCartCount();
     },
@@ -251,7 +283,7 @@
 
   const NAV = [
     { href: "shop.html", label: "Shop prints", page: "shop" },
-    { href: "commissions.html", label: "House portraits", page: "commissions" },
+    { href: "commissions.html", label: "Commissions", page: "commissions" },
     { href: "about.html", label: "About", page: "about" },
     { href: "faq.html", label: "FAQ", page: "faq" },
     { href: `mailto:${SITE.email}`, label: "Contact", page: "contact" },
@@ -262,7 +294,7 @@
     const header = $("[data-site-header]");
     if (header) {
       header.innerHTML = `
-        <div class="proto-bar">Prototype: prices, print details and copy are placeholders.</div>
+        <div class="proto-bar">Prototype: photos, print details and some copy are placeholders.</div>
         <div class="gingham gingham-band" aria-hidden="true"></div>
         <div class="wrap header-inner">
           <a class="wordmark" href="index.html">Priya <span>Watercolors</span></a>
@@ -298,14 +330,14 @@
         <div class="wrap footer-inner">
           <div>
             <p class="wordmark wordmark-footer">Priya <span>Watercolors</span></p>
-            <p class="muted">Limited-run watercolor prints and hand-painted house portraits.</p>
+            <p class="muted">Limited-run watercolor prints and 5 × 7 original commissions.</p>
             <p><a href="${SITE.instagram}" rel="noopener">Instagram ${SITE.instagramHandle}</a><br>
             <a href="mailto:${SITE.email}">${SITE.email}</a></p>
           </div>
           <nav aria-label="Footer">
             <ul class="footer-links">
               <li><a href="shop.html">Shop prints</a></li>
-              <li><a href="commissions.html">House portraits</a></li>
+              <li><a href="commissions.html">Commissions</a></li>
               <li><a href="about.html">About Priya</a></li>
               <li><a href="mailto:${SITE.email}">Contact</a></li>
             </ul>
@@ -337,7 +369,7 @@
           </div>
           <div class="card-body">
             <h3 class="card-title">${esc(p.title)}</h3>
-            <p class="card-meta">Print · ${sizeLabel(p)} · ${out ? '<span class="sold-text">Sold out</span>' : money(p.price)}</p>
+            <p class="card-meta">Print · ${sizesLabel(p)} · ${out ? '<span class="sold-text">Sold out</span>' : printPriceRange}</p>
           </div>
         </a>
       </li>`;
@@ -357,7 +389,7 @@
     $("[data-hero-art]").innerHTML = `
       <a class="hero-art" href="product.html?p=${hero.slug}">
         <div class="mat mat-hero"><div class="mat-inner">${artImg(hero, { lazy: false })}</div></div>
-        <span class="hero-caption">${esc(hero.title)}, print, ${sizeLabel(hero)}</span>
+        <span class="hero-caption">${esc(hero.title)}, print, ${sizesLabel(hero)}</span>
       </a>`;
 
     $("[data-featured]").innerHTML = PRODUCTS.slice().sort(newestFirst).map((p) => card(p)).join("");
@@ -367,7 +399,8 @@
       .join("");
 
     $("[data-portrait]").innerHTML = portraitSVG();
-    $("[data-from-price]").textContent = money(COMMISSION_PRICING[0].from);
+    $("[data-from-price]").textContent = commissionPrice(COMMISSION_TYPES.find((t) => t.label === "House"));
+    $$("[data-commission-size]").forEach((el) => (el.textContent = COMMISSION_SIZE));
     $$("[data-turnaround]").forEach((el) => (el.textContent = SITE.commissions.turnaround));
   };
 
@@ -382,8 +415,7 @@
       if (availability.value === "available") list = list.filter((p) => !isSoldOut(p));
       if (availability.value === "sold") list = list.filter((p) => isSoldOut(p));
 
-      if (sort.value === "price-asc") list.sort((a, b) => a.price - b.price);
-      else if (sort.value === "price-desc") list.sort((a, b) => b.price - a.price);
+      if (sort.value === "name") list.sort((a, b) => a.title.localeCompare(b.title));
       else list.sort(newestFirst);
 
       // Keep in-stock prints ahead of sold-out ones unless filtering to sold out.
@@ -413,7 +445,7 @@
 
     document.title = `${p.title}, watercolor print | Priya Watercolors`;
     const desc = $('meta[name="description"]');
-    if (desc) desc.setAttribute("content", `${p.title}: a limited-run print of an original watercolor by Priya, ${sizeLabel(p)}, edition of ${p.edition}.`);
+    if (desc) desc.setAttribute("content", `${p.title}: a limited-run print of an original watercolor by Priya, ${sizesLabel(p)}, edition of ${p.edition}.`);
 
     // Gallery views stand in for the 3–6 photos per piece (S4).
     const views = [
@@ -423,7 +455,7 @@
     ];
 
     function viewHTML(v) {
-      if (v.id === "room") return roomMockup(p);
+      if (v.id === "room") return roomMockup(p, chosenSize());
       return `<div class="mat mat-stage"><div class="mat-inner">${artImg(p, { view: v.id, lazy: false, alt: v.id === "detail" ? `Close-up detail of ${p.title}` : p.alt })}</div></div>`;
     }
 
@@ -453,7 +485,7 @@
           <div data-buy></div>
           <p class="story">${esc(p.story)}</p>
           <dl class="facts">
-            <div><dt>Print size</dt><dd>${sizeLabelFull(p)}</dd></div>
+            <div><dt>Sizes</dt><dd>${PRINT_SIZES.map((s) => `${sizeLabelFull(p, s)}, ${money(s.price)}`).join("<br>")}</dd></div>
             <div><dt>Medium</dt><dd>${esc(PRINT_DETAILS.medium)}</dd></div>
             <div><dt>Paper</dt><dd>${esc(PRINT_DETAILS.paper)}</dd></div>
             <div><dt>Edition</dt><dd>Limited to ${p.edition} prints</dd></div>
@@ -470,8 +502,12 @@
       </section>`;
 
     // Stage and thumbnails
+    let sizeId = PRINT_SIZES[0].id;
+    const chosenSize = () => findSize(sizeId);
+    let shown = 0;
     const stage = $("[data-stage]");
     function show(i) {
+      shown = i;
       const v = views[i];
       stage.innerHTML = v.zoom
         ? `<button type="button" class="stage-zoom" aria-label="Zoom in on ${esc(v.label.toLowerCase())}">${viewHTML(v)}<span class="zoom-hint" aria-hidden="true">Tap to zoom</span></button>`
@@ -486,8 +522,8 @@
     // Buy box
     function renderBuy() {
       const left = inStock(p);
-      const inCart = cart.qty(p.slug);
-      $("[data-price]").innerHTML = left ? money(p.price) : '<span class="badge badge-sold badge-inline">Sold out</span>';
+      const inCart = cart.qtyOf(p.slug);
+      $("[data-price]").innerHTML = left ? money(chosenSize().price) : '<span class="badge badge-sold badge-inline">Sold out</span>';
       $("[data-avail]").innerHTML = left
         ? `<span class="dot" aria-hidden="true"></span> ${stockLabel(p)}`
         : "";
@@ -495,8 +531,8 @@
 
       if (!left) {
         box.innerHTML = `
-          <p>All ${p.edition} prints of ${esc(p.title)} have found homes. Follow <a href="${SITE.instagram}" rel="noopener">${SITE.instagramHandle}</a> to hear about new prints, or have Priya paint your own house.</p>
-          <a class="btn btn-block" href="commissions.html#request">Commission a house portrait</a>`;
+          <p>All ${p.edition} prints of ${esc(p.title)} have found homes. Follow <a href="${SITE.instagram}" rel="noopener">${SITE.instagramHandle}</a> to hear about new prints, or commission an original of your own.</p>
+          <a class="btn btn-block" href="commissions.html#request">Commission a painting</a>`;
         return;
       }
 
@@ -509,6 +545,14 @@
       }
 
       box.innerHTML = `
+        <fieldset class="size-pick">
+          <legend>Size</legend>
+          <div class="chips">
+            ${PRINT_SIZES.map(
+              (s) => `<label class="chip"><input type="radio" name="print-size" value="${s.id}"${s.id === sizeId ? " checked" : ""}><span>${sizeLabel(p, s)} · ${money(s.price)}</span></label>`
+            ).join("")}
+          </div>
+        </fieldset>
         <div class="buy-row">
           <div class="qty">
             <label for="qty">Quantity</label>
@@ -517,11 +561,20 @@
           <button type="button" class="btn" data-add>Add to cart</button>
         </div>
         ${inCart ? `<p class="fine"><a href="cart.html">${inCart} already in your cart: check out</a></p>` : ""}`;
+      $$('[name="print-size"]', box).forEach((r) =>
+        r.addEventListener("change", () => {
+          sizeId = r.value;
+          renderBuy();
+          if (views[shown].id === "room") show(shown);
+          $(`[name="print-size"][value="${sizeId}"]`).focus();
+        })
+      );
       $("[data-add]", box).addEventListener("click", () => {
         const n = Number($("#qty").value);
-        cart.set(p.slug, cart.qty(p.slug) + n);
+        const key = lineKey(p.slug, sizeId);
+        cart.set(key, cart.qty(key) + n);
         renderBuy();
-        announce(`${n} ${p.title} ${n === 1 ? "print" : "prints"} added to cart`);
+        announce(`${n} ${sizeLabel(p, chosenSize())} ${p.title} ${n === 1 ? "print" : "prints"} added to cart`);
         const link = $("[data-buy] a");
         if (link) link.focus();
       });
@@ -533,12 +586,12 @@
     $("[data-similar]").innerHTML = others.map((o) => card(o)).join("");
   };
 
-  function roomMockup(p) {
+  function roomMockup(p, size) {
     // The sofa is about 84 in wide and spans 64% of the wall, so the print
     // (plus roughly 2 in of frame or mat on each side) is drawn to the same scale.
-    const width = ((p.w + 4) * 64) / 84;
+    const width = ((printDims(p, size).w + 4) * 64) / 84;
     return `
-      <div class="room" role="img" aria-label="${esc(p.title)} shown to scale on a wall above an 84-inch sofa">
+      <div class="room" role="img" aria-label="${esc(p.title)}, ${sizeLabel(p, size)}, shown to scale on a wall above an 84-inch sofa">
         <div class="room-art" style="width:${width}%">
           <div class="room-frame">${artImg(p, { lazy: false, alt: "" })}</div>
         </div>
@@ -573,8 +626,7 @@
     const regions = SITE.shipping.domesticOnly ? SITE.shipping.regions.slice(0, 1) : SITE.shipping.regions;
 
     function render(notice = "") {
-      const lines = cart.lines();
-      const items = Object.keys(lines).map((slug) => ({ p: findProduct(slug), qty: lines[slug] }));
+      const items = cart.items();
 
       if (!items.length) {
         root.innerHTML = `${notice}
@@ -585,27 +637,27 @@
         return;
       }
 
-      const subtotal = items.reduce((sum, { p, qty }) => sum + p.price * qty, 0);
+      const subtotal = items.reduce((sum, { size, qty }) => sum + size.price * qty, 0);
       root.innerHTML = `${notice}
         <div class="cart-layout">
           <ul class="cart-items">
             ${items
               .map(
-                ({ p, qty }) => `
+                ({ key, p, size, qty }, idx) => `
               <li class="cart-item">
                 <a class="cart-thumb" href="product.html?p=${p.slug}"><div class="mat mat-small"><div class="mat-inner">${artImg(p, { alt: "" })}</div></div></a>
                 <div class="cart-item-body">
                   <h2 class="cart-item-title"><a href="product.html?p=${p.slug}">${esc(p.title)}</a></h2>
-                  <p class="muted">Print · ${sizeLabel(p)} · ${money(p.price)} each</p>
+                  <p class="muted">Print · ${sizeLabel(p, size)} · ${money(size.price)} each</p>
                   <div class="cart-qty">
-                    <label for="qty-${p.slug}">Qty</label>
-                    <select id="qty-${p.slug}" data-qty="${p.slug}">
-                      ${Array.from({ length: inStock(p) }, (_, i) => `<option${i + 1 === qty ? " selected" : ""}>${i + 1}</option>`).join("")}
+                    <label for="qty-${idx}">Qty</label>
+                    <select id="qty-${idx}" data-qty="${key}">
+                      ${Array.from({ length: qty + inStock(p) - cart.qtyOf(p.slug) }, (_, i) => `<option${i + 1 === qty ? " selected" : ""}>${i + 1}</option>`).join("")}
                     </select>
-                    <button type="button" class="btn-link" data-remove="${p.slug}">Remove<span class="sr-only"> ${esc(p.title)}</span></button>
+                    <button type="button" class="btn-link" data-remove="${key}">Remove<span class="sr-only"> ${esc(p.title)}, ${sizeLabel(p, size)}</span></button>
                   </div>
                 </div>
-                <p class="cart-item-price">${money(p.price * qty)}</p>
+                <p class="cart-item-price">${money(size.price * qty)}</p>
               </li>`
               )
               .join("")}
@@ -641,15 +693,16 @@
         sel.addEventListener("change", () => {
           cart.set(sel.dataset.qty, Number(sel.value));
           render();
-          $("#qty-" + sel.dataset.qty).focus();
+          const again = $(`[data-qty="${sel.dataset.qty}"]`);
+          if (again) again.focus();
         })
       );
       $$("[data-remove]", root).forEach((b) =>
         b.addEventListener("click", () => {
-          const p = findProduct(b.dataset.remove);
-          cart.set(p.slug, 0);
+          const { p, size } = parseKey(b.dataset.remove);
+          cart.set(b.dataset.remove, 0);
           render();
-          announce(`${p.title} removed from cart`);
+          announce(`${p.title}, ${sizeLabel(p, size)}, removed from cart`);
         })
       );
 
@@ -660,10 +713,13 @@
 
     // Stock check: tell the buyer if anything sold out or ran low since it was added (S5).
     const raw = local.get("pw-cart-lines", {});
-    const changed = Object.keys(raw)
-      .map(findProduct)
-      .filter((p) => p && raw[p.slug] > inStock(p))
-      .map((p) => p.title);
+    const kept = cart.lines();
+    const changed = [...new Set(
+      Object.keys(raw)
+        .map(parseKey)
+        .filter(({ key, p, size }) => p && size && raw[key] > (kept[key] || 0))
+        .map(({ p }) => p.title)
+    )];
     local.set("pw-cart-lines", cart.lines());
     updateCartCount();
     render(
@@ -697,7 +753,7 @@
       local.set("pw-sold-counts", sold);
       session.set("pw-order", {
         number: "PW-" + String(1000 + Math.floor(Math.random() * 9000)),
-        lines: items.map(({ p, qty }) => ({ slug: p.slug, qty })),
+        lines: items.map(({ key, qty }) => ({ key, qty })),
         subtotal,
         shipping: region.price,
         region: region.label,
@@ -720,9 +776,9 @@
       <p>A confirmation email is on its way to you, and Priya has been notified. You'll get another email with a tracking link when your order ships, usually within 3 business days.</p>
       <ul class="order-items">
         ${order.lines
-          .map(({ slug, qty }) => {
-            const p = findProduct(slug);
-            return p ? `<li><span>${esc(p.title)} print <span class="muted">× ${qty}</span></span><span>${money(p.price * qty)}</span></li>` : "";
+          .map(({ key, qty }) => {
+            const { p, size } = parseKey(key || "");
+            return p && size ? `<li><span>${esc(p.title)} print, ${sizeLabel(p, size)} <span class="muted">× ${qty}</span></span><span>${money(size.price * qty)}</span></li>` : "";
           })
           .join("")}
         <li><span>Shipping to ${esc(order.region)}</span><span>${money(order.shipping)}</span></li>
@@ -733,20 +789,21 @@
   };
 
   /* ---------------------------------------------------------------- *
-   * House portrait commissions and request form (F1–F13)
+   * Commissions (5 × 7 originals) and request form (F1–F13)
    * ---------------------------------------------------------------- */
 
   pages.commissions = function () {
-    $("[data-pricing]").innerHTML = COMMISSION_PRICING.map(
-      (r) => `<tr><th scope="row">${r.size}</th><td>from ${money(r.from)}</td></tr>`
+    $("[data-pricing]").innerHTML = COMMISSION_TYPES.map(
+      (t) => `<tr><th scope="row">${esc(t.label)}</th><td>${commissionPrice(t)}${t.price ? "" : ' <span class="muted">depending on detail</span>'}</td></tr>`
     ).join("");
+    $$("[data-commission-size]").forEach((el) => (el.textContent = COMMISSION_SIZE));
 
     $("[data-examples]").innerHTML = COMMISSION_EXAMPLES.map(
       (e) => `
       <li class="example">
-        <div class="mat"><div class="mat-inner">${artImg(e, { alt: `Watercolor house portrait: ${e.title}` })}</div></div>
+        <div class="mat"><div class="mat-inner">${artImg(e, { alt: `Watercolor house commission: ${e.title}` })}</div></div>
         <p class="card-title">${esc(e.title)}</p>
-        <p class="card-meta">House portrait · ${e.w} × ${e.h} in</p>
+        <p class="card-meta">House · ${e.w} × ${e.h} in original</p>
       </li>`
     ).join("");
 
@@ -755,7 +812,7 @@
     // F13: booked-until notice, or a closed form when the waitlist is full.
     const notice = $("[data-booking]");
     if (!SITE.commissions.open) {
-      notice.innerHTML = `<strong>House portraits are closed for now.</strong> Priya's list is full. Follow <a href="${SITE.instagram}">${SITE.instagramHandle}</a> to hear when they reopen.`;
+      notice.innerHTML = `<strong>Commissions are closed for now.</strong> Priya's list is full. Follow <a href="${SITE.instagram}">${SITE.instagramHandle}</a> to hear when they reopen.`;
       $("[data-form-wrap]").innerHTML = `<p>The request form will be back when commissions reopen.</p>`;
       return;
     }
@@ -763,21 +820,10 @@
       ? `<strong>Currently booked until ${esc(SITE.commissions.bookedUntil)}.</strong> Send your request now to hold a spot; your ${esc(SITE.commissions.turnaround)} start then.`
       : `<strong>Now taking requests.</strong> Your painting is ready about ${esc(SITE.commissions.turnaround)} after you send the form. Nothing to pay up front.`;
 
-    $("#budget").innerHTML =
-      `<option value="">Choose a range</option>` +
-      COMMISSION_PRICING.map((r, i) => {
-        const next = COMMISSION_PRICING[i + 1];
-        const label = next ? `${money(r.from)}–${money(next.from)}` : `${money(r.from)} or more`;
-        return `<option>${label}</option>`;
-      }).join("") +
-      `<option>Not sure yet</option>`;
-
-    $("#size-options").innerHTML =
-      COMMISSION_PRICING.map(
-        (r, i) => `<label class="chip"><input type="radio" id="size-${i}" name="size" value="${r.size}" aria-describedby="size-error"><span>${r.size}</span></label>`
-      ).join("") + `<label class="chip"><input type="radio" id="size-unsure" name="size" value="Not sure" aria-describedby="size-error"><span>Not sure</span></label>`;
-
-    $$("[data-max-size]").forEach((el) => (el.textContent = COMMISSION_MAX_SIZE));
+    $("#type-options").innerHTML = COMMISSION_TYPES.map(
+      (t, i) => `<label class="chip"><input type="radio" id="type-${i}" name="type" value="${esc(t.label)}" aria-describedby="type-error"><span>${esc(t.label)} · ${commissionPrice(t)}</span></label>`
+    ).join("");
+    $("#commission-form").elements.size.value = `${COMMISSION_SIZE} original`;
 
     $("#location").innerHTML =
       `<option value="">Choose one</option>` + LOCATIONS.map((l) => `<option>${esc(l.label)}</option>`).join("");
@@ -794,6 +840,7 @@
 
   function setupCommissionForm() {
     const form = $("#commission-form");
+    const el = (name) => form.elements[name];
     const files = [];
     const totalBytes = () => files.reduce((n, f) => n + f.file.size, 0);
 
@@ -808,6 +855,19 @@
     const gift = $("#gift");
     const occasion = $("[data-occasion]");
     gift.addEventListener("change", () => (occasion.hidden = !gift.checked));
+
+    // The house address question only applies to house commissions.
+    const addressField = $("[data-address]");
+    const syncType = () => {
+      const type = form.elements.type.value;
+      const t = COMMISSION_TYPES.find((x) => x.label === type);
+      addressField.hidden = type !== "House";
+      el("address").disabled = addressField.hidden;
+      $("[data-type-price]").textContent = t
+        ? `${t.label}: ${commissionPrice(t)}${t.price ? "" : ", depending on detail. Priya confirms the exact price when she replies"}.`
+        : "";
+    };
+    $$('[name="type"]', form).forEach((r) => r.addEventListener("change", syncType));
 
     // Local drop-off follow-up, only for places Priya visits.
     const placeSelect = $("#location");
@@ -866,7 +926,7 @@
     renderFiles();
 
     // Validation (F11)
-    const el = (name) => form.elements[name];
+    syncType();
     const rules = {
       name: () => (el("name").value.trim() ? "" : "Please enter your name."),
       email: () => {
@@ -876,12 +936,11 @@
       },
       description: () => {
         const v = el("description").value.trim();
-        if (!v) return "Tell Priya a little about the house.";
+        if (!v) return "Tell Priya a little about what you'd like painted.";
         return v.length < 20 ? "Add a bit more detail (at least 20 characters)." : "";
       },
-      photos: () => (files.length ? "" : "Add at least one photo of the house."),
-      size: () => (el("size").value ? "" : "Choose a size, or pick “Not sure”."),
-      budget: () => (el("budget").value ? "" : "Choose a budget range."),
+      type: () => (el("type").value ? "" : "Choose what you'd like painted."),
+      photos: () => (files.length ? "" : "Add at least one reference photo."),
       zip: () => {
         const v = el("zip").value.trim();
         return !v || /^\d{5}(-\d{4})?$/.test(v) ? "" : "Enter a 5-digit ZIP code.";
@@ -909,7 +968,7 @@
       controlsFor(name).forEach((c) => {
         const instant = c.type === "radio" || c.type === "checkbox" || c.tagName === "SELECT";
         c.addEventListener("blur", () => {
-          if (name !== "photos" && name !== "size") touched.add(name);
+          if (name !== "photos" && name !== "type") touched.add(name);
           if (touched.has(name)) validateField(name);
         });
         c.addEventListener(instant ? "change" : "input", () => {
@@ -919,7 +978,7 @@
       });
     });
 
-    const anchorFor = (name) => (name === "size" ? "size-0" : name);
+    const anchorFor = (name) => (name === "type" ? "type-0" : name);
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -948,11 +1007,11 @@
         name: el("name").value.trim(),
         email: el("email").value.trim(),
         phone: el("phone").value.trim(),
-        address: el("address").value.trim(),
+        type: el("type").value,
+        address: el("address").disabled ? "" : el("address").value.trim(),
         description: el("description").value.trim(),
         photos: files.map((f) => f.file.name),
         size: el("size").value,
-        budget: el("budget").value,
         neededBy: el("needed-by").value,
         gift: el("gift").checked ? el("occasion").value.trim() || "Yes" : "",
         framing: el("framing").value,
@@ -1002,12 +1061,12 @@
         ${row("Name", d.name)}
         ${row("Email", d.email)}
         ${row("Phone", d.phone)}
-        ${row("Commission", "House portrait")}
+        ${row("Commission", d.type)}
         ${row("House address", d.address)}
         ${row("Description", d.description)}
         ${row("Photos", d.photos.join(", "))}
         ${row("Size", d.size)}
-        ${row("Budget", d.budget)}
+        ${row("Price", (() => { const t = COMMISSION_TYPES.find((x) => x.label === d.type); return t ? commissionPrice(t) + (t.price ? "" : ", depending on detail") : ""; })())}
         ${row("Needed by", d.neededBy ? fmt(d.neededBy + "T12:00") : "")}
         ${row("Gift or event", d.gift)}
         ${row("Framing", d.framing)}

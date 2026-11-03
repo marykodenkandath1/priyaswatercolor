@@ -3,7 +3,7 @@
 Plain-language notes for keeping the site up to date. Almost everything lives in one file,
 **`js/data.js`**. Search it for `PLACEHOLDER` to find every value that still needs a real one.
 
-## Turn on the house-portrait form (one time)
+## Turn on the commission form (one time)
 
 The request form is emailed to **priyaswatercolors@gmail.com** by FormSubmit, a free
 service. Nothing needs to run on a server.
@@ -11,7 +11,7 @@ service. Nothing needs to run on a server.
 1. Once the site is online, send one test request through the form yourself.
 2. FormSubmit emails priyaswatercolors@gmail.com an **activation** message. Check the spam
    folder too. Click the button in it.
-3. Every request after that arrives as an email titled "New house portrait request", with
+3. Every request after that arrives as an email titled "New commission request", with
    the reference photos attached. Reply to it directly to answer the customer.
 
 Good to know:
@@ -28,9 +28,10 @@ Good to know:
 
 | To change | Edit in `js/data.js` |
 | --- | --- |
-| A print's price, size or story | that print in `PRODUCTS` |
+| Print sizes or prices (shared by every print) | `PRINT_SIZES` |
+| A print's title, story or photo | that print in `PRODUCTS` |
 | How many of a print are left | `stock` on that print |
-| House-portrait sizes or prices | `COMMISSION_PRICING` (and `COMMISSION_MAX_SIZE`) |
+| Commission types or prices | `COMMISSION_TYPES` (and `COMMISSION_SIZE`) |
 | Drop-off locations | `LOCATIONS` (`dropOff: true` shows the drop-off question) |
 | Turnaround time | `SITE.commissions.turnaround` |
 | Pause commissions | `SITE.commissions.open: false` |
@@ -39,7 +40,8 @@ Good to know:
 | Email or Instagram | `SITE.email`, `SITE.instagram`, `SITE.instagramHandle` |
 
 The written copy on each page (FAQ answers, About text and so on) is in that page's
-`.html` file.
+`.html` file. The FAQ, the home page and the commissions page description also mention
+the prices in words, so update those too if prices change.
 
 ## Adding real photos
 

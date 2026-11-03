@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Watercolor house portraits | Priya Watercolors</title>
-  <meta name="description" content="Commission a hand-painted watercolor portrait of your house. Ready about 2 weeks after you send the form, with nothing to pay up front.">
-  <meta property="og:title" content="Watercolor house portraits | Priya Watercolors">
-  <meta property="og:description" content="Commission a hand-painted watercolor portrait of your house. Ready about 2 weeks after you send the form, with nothing to pay up front.">
+  <title>Commissions | Priya Watercolors</title>
+  <meta name="description" content="Commission a 5 × 7 original watercolor of your house ($50), pet or favorite place ($30–$50). Ready about 2 weeks after you send the form, with nothing to pay up front.">
+  <meta property="og:title" content="Commissions | Priya Watercolors">
+  <meta property="og:description" content="Commission a 5 × 7 original watercolor of your house ($50), pet or favorite place ($30–$50). Ready about 2 weeks after you send the form, with nothing to pay up front.">
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,8 +19,8 @@
   <main id="main">
     <div class="wrap">
       <div class="page-head">
-        <h1>House portraits</h1>
-        <p>A hand-painted watercolor of your home, painted from your photos. A lovely gift for a first home, a family house or a place you're saying goodbye to.</p>
+        <h1>Commissions</h1>
+        <p>An original watercolor painted from your photos: your home, a pet, a wedding venue or a place you love. Every commission is a <strong>5 × 7 in original</strong>, painted by hand just for you.</p>
         <p class="booking" data-booking role="note"></p>
       </div>
     </div>
@@ -29,8 +29,8 @@
       <div class="wrap">
         <h2 id="how-h">How it works</h2>
         <ol class="steps">
-          <li><h3>Send the form</h3><p>Share a few photos of the house, the size you'd like and your budget.</p></li>
-          <li><h3>Priya confirms</h3><p>She replies with a quote and any questions, usually within 3 business days.</p></li>
+          <li><h3>Send the form</h3><p>Tell Priya what you'd like painted and share a few photos.</p></li>
+          <li><h3>Priya confirms</h3><p>She replies with the price and any questions, usually within 3 business days.</p></li>
           <li><h3>She paints it</h3><p>Your painting is ready about <span data-turnaround></span> after you send the form.</p></li>
           <li><h3>You pay</h3><p>No deposit. You get a secure payment link once your painting is finished.</p></li>
           <li><h3>It ships</h3><p>Packed flat with rigid backing and shipped within the US.</p></li>
@@ -40,30 +40,32 @@
 
     <section class="section-tight" aria-labelledby="pricing-h">
       <div class="wrap narrow">
-        <h2 id="pricing-h">Pricing guide</h2>
+        <h2 id="pricing-h">Pricing</h2>
+        <p><strong>All commissions are <span data-commission-size></span> originals.</strong> No other sizes.</p>
         <table class="pricing">
-          <thead><tr><th scope="col">Size</th><th scope="col">Starting price</th></tr></thead>
+          <thead><tr><th scope="col">Commission</th><th scope="col">Price</th></tr></thead>
           <tbody data-pricing></tbody>
         </table>
-        <p class="fine muted">[Placeholder prices. Priya to confirm.] Priya paints house portraits up to <span data-max-size></span>. Starting prices are for one house on a simple background. Extra detail such as gardens, people, pets or cars adds to the price, and Priya will include it in your quote.</p>
+        <p class="fine muted">House commissions are a flat price. For everything else, the price depends on the level of detail, and Priya confirms it when she replies to your request.</p>
       </div>
     </section>
 
     <section class="section-tight" aria-labelledby="examples-h">
       <div class="wrap">
-        <h2 id="examples-h">Past house portraits</h2>
+        <h2 id="examples-h">Past commissions</h2>
         <ul class="examples" data-examples></ul>
       </div>
     </section>
 
     <section class="section" id="request" aria-labelledby="request-h">
       <div class="wrap narrow" data-form-wrap>
-        <h2 id="request-h">Request a house portrait</h2>
+        <h2 id="request-h">Request a commission</h2>
         <p class="muted">It takes about 5 minutes. Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
 
         <form id="commission-form" class="form-card card-edge" method="POST" enctype="multipart/form-data" novalidate>
           <!-- Delivery settings for FormSubmit (formsubmit.co). action, _next and _url are filled in by js/app.js. -->
-          <input type="hidden" name="_subject" value="New house portrait request">
+          <input type="hidden" name="_subject" value="New commission request">
+          <input type="hidden" name="size" value="">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_next" value="">
           <input type="hidden" name="_url" value="">
@@ -90,25 +92,39 @@
           </fieldset>
 
           <fieldset class="form-section">
-            <legend>The house</legend>
+            <legend>The painting</legend>
 
-            <div class="field">
+            <div class="field" data-field="type">
+              <fieldset>
+                <legend id="type-legend">What would you like painted? <span class="req" aria-hidden="true">*</span></legend>
+                <div class="chips" id="type-options"></div>
+              </fieldset>
+              <p class="hint" data-type-price aria-live="polite"></p>
+              <p class="error" id="type-error"></p>
+            </div>
+
+            <div class="size-fixed">
+              <span class="field-label">Size</span>
+              <p><strong><span data-commission-size></span> original</strong>. All commissions are this size.</p>
+            </div>
+
+            <div class="field" data-address hidden>
               <label for="address">House address or neighborhood <span class="opt">(optional)</span></label>
               <p class="hint" id="address-hint">Helps Priya look the house up if a detail isn't clear in your photos. It's never shared.</p>
               <input type="text" id="address" name="address" autocomplete="street-address" aria-describedby="address-hint">
             </div>
 
             <div class="field" data-field="description">
-              <label for="description">Tell Priya about the house <span class="req" aria-hidden="true">*</span></label>
-              <p class="hint" id="description-hint">What it means to you, the season or time of day you love it, and anything to include or leave out (cars, bins, a favorite tree).</p>
+              <label for="description">Tell Priya about it <span class="req" aria-hidden="true">*</span></label>
+              <p class="hint" id="description-hint">What it means to you, the season or time of day you love, and anything to include or leave out (cars, bins, a favorite tree).</p>
               <textarea id="description" name="description" maxlength="1000" required aria-describedby="description-hint description-error"></textarea>
               <p class="counter" data-count aria-live="polite"></p>
               <p class="error" id="description-error"></p>
             </div>
 
             <div class="field" data-field="photos">
-              <span class="field-label" id="photos-label">Photos of the house <span class="req" aria-hidden="true">*</span></span>
-              <p class="hint" id="photos-hint">Up to 5 photos, JPG, PNG or HEIC, 10 MB in total. A straight-on daytime shot of the front works best.</p>
+              <span class="field-label" id="photos-label">Reference photos <span class="req" aria-hidden="true">*</span></span>
+              <p class="hint" id="photos-hint">Up to 5 photos, JPG, PNG or HEIC, 10 MB in total. Clear daytime photos work best; for a house, a straight-on shot of the front.</p>
               <div class="dropzone">
                 <input type="file" id="photos" accept=".jpg,.jpeg,.png,.heic,image/jpeg,image/png,image/heic" multiple aria-labelledby="photos-label" aria-describedby="photos-hint photos-error">
                 <p><strong>Choose photos</strong> or drag them here</p>
@@ -124,21 +140,6 @@
                 <input type="file" name="attachment4" tabindex="-1" aria-hidden="true">
                 <input type="file" name="attachment5" tabindex="-1" aria-hidden="true">
               </div>
-            </div>
-
-            <div class="field" data-field="size">
-              <fieldset>
-                <legend id="size-legend">Size <span class="req" aria-hidden="true">*</span></legend>
-                <p class="hint">Priya paints house portraits up to <span data-max-size></span>.</p>
-                <div class="chips" id="size-options"></div>
-              </fieldset>
-              <p class="error" id="size-error"></p>
-            </div>
-
-            <div class="field" data-field="budget">
-              <label for="budget">Budget <span class="req" aria-hidden="true">*</span></label>
-              <select id="budget" name="budget" required aria-describedby="budget-error"></select>
-              <p class="error" id="budget-error"></p>
             </div>
           </fieldset>
 
@@ -161,7 +162,7 @@
               <select id="framing" name="framing">
                 <option value="">No preference</option>
                 <option>Unframed</option>
-                <option>Framed (please include in my quote)</option>
+                <option>Framed (please include the cost when you reply)</option>
               </select>
             </div>
             <div class="field">
