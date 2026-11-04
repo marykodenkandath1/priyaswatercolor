@@ -1,3 +1,5 @@
 .DS_Store
 # Planning document; kept locally, not published with the site.
 PRD*.pdf
+.vercel
+.env*
