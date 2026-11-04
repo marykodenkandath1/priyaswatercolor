@@ -1,4 +1,4 @@
-/* Priya Watercolors prototype styles. Mobile first; tested down to 375px.
+/* Priya's Watercolors prototype styles. Mobile first; tested down to 375px.
  * Gingham look: change --gingham (the check color) to swap red for blue, green, etc. */
 
 :root {
@@ -572,9 +572,14 @@ details ul { padding-left: 20px; margin-bottom: 1em; }
 
 /* Footer */
 .site-footer { background: var(--paper-2); margin-top: 72px; padding: 0 0 24px; }
+/* A page that ends on a full-width tinted section meets the footer directly. */
+main:has(> .section-alt:last-child) + .site-footer { margin-top: 0; }
 .site-footer .footer-inner { padding-top: 40px; }
 .footer-inner { display: grid; gap: 32px; }
-@media (min-width: 700px) { .footer-inner { grid-template-columns: 2fr 1fr 1fr; } }
+@media (min-width: 700px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-inner .footer-links { grid-template-columns: 1fr 1fr; column-gap: 32px; }
+}
 .wordmark-footer { margin-bottom: 8px; }
 .footer-links { list-style: none; display: grid; gap: 4px; }
 .footer-links a { color: var(--ink); text-decoration: none; display: inline-block; padding: 6px 0; }

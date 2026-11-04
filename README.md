@@ -1,6 +1,6 @@
-# Priya Watercolors
+# Priya's Watercolors
 
-Website for Priya Watercolors: limited-run prints of four watercolors and 5 × 7
+Website for Priya's Watercolors: limited-run prints of four watercolors and 5 × 7
 original commissions. It is a static site (HTML, CSS and plain JavaScript) with no build step
 and no dependencies.
 

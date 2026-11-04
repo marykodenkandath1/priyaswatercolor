@@ -11,7 +11,7 @@
  */
 
 const SITE = {
-  name: "Priya Watercolors",
+  name: "Priya's Watercolors",
   // Contact links open an email to this address.
   email: "priyaswatercolors@gmail.com",
   // Web app URL of the Google Apps Script that saves print orders and

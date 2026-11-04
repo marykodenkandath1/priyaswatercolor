@@ -1,5 +1,5 @@
 /*
- * Priya Watercolors prototype: shared header/footer, placeholder artwork,
+ * Priya's Watercolors prototype: shared header/footer, placeholder artwork,
  * stock and cart, and the per-page behavior selected by <body data-page="...">.
  */
 (function () {
@@ -296,7 +296,7 @@
         <div class="proto-bar">Prototype: photos, print details and some copy are placeholders.</div>
         <div class="gingham gingham-band" aria-hidden="true"></div>
         <div class="wrap header-inner">
-          <a class="wordmark" href="index.html">Priya <span>Watercolors</span></a>
+          <a class="wordmark" href="index.html">Priya's <span>Watercolors</span></a>
           <nav class="site-nav" aria-label="Main">
             <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-list">
               <span class="nav-toggle-bars" aria-hidden="true"></span><span class="sr-only">Menu</span>
@@ -328,9 +328,8 @@
         <div class="gingham gingham-band" aria-hidden="true"></div>
         <div class="wrap footer-inner">
           <div>
-            <p class="wordmark wordmark-footer">Priya <span>Watercolors</span></p>
-            <p class="muted">Limited-run watercolor prints and 5 × 7 original commissions.</p>
-            <p><a href="${SITE.instagram}" rel="noopener">Instagram ${SITE.instagramHandle}</a><br>
+            <p class="wordmark wordmark-footer">Priya's <span>Watercolors</span></p>
+            <p>Instagram <a href="${SITE.instagram}" rel="noopener">${SITE.instagramHandle}</a><br>
             <a href="mailto:${SITE.email}">${SITE.email}</a></p>
           </div>
           <nav aria-label="Footer">
@@ -339,20 +338,12 @@
               <li><a href="commissions.html">Commissions</a></li>
               <li><a href="about.html">About Priya</a></li>
               <li><a href="mailto:${SITE.email}">Contact</a></li>
-            </ul>
-          </nav>
-          <nav aria-label="Policies">
-            <ul class="footer-links">
               <li><a href="faq.html#payment">Paying with Venmo</a></li>
-              <li><a href="faq.html#shipping">Shipping</a></li>
-              <li><a href="faq.html#returns">Returns</a></li>
-              <li><a href="faq.html#care">Caring for your print</a></li>
               <li><a href="faq.html#commission-terms">Commission terms</a></li>
-              <li><a href="faq.html#privacy">Privacy policy</a></li>
             </ul>
           </nav>
         </div>
-        <div class="wrap footer-base muted">© ${new Date().getFullYear()} Priya Watercolors. All artwork and images are copyright the artist.</div>`;
+        <div class="wrap footer-base muted">© ${new Date().getFullYear()} Priya's Watercolors. All artwork and images are copyright the artist.</div>`;
     }
     updateCartCount();
   }
@@ -398,10 +389,6 @@
       .map((e) => `<div class="mat mat-small"><div class="mat-inner">${artImg(e, { alt: e.title })}</div></div>`)
       .join("");
 
-    $("[data-portrait]").innerHTML = portraitSVG();
-    $("[data-from-price]").textContent = commissionPrice(COMMISSION_TYPES.find((t) => t.label === "House"));
-    $$("[data-commission-size]").forEach((el) => (el.textContent = COMMISSION_SIZE));
-    $$("[data-turnaround]").forEach((el) => (el.textContent = SITE.commissions.turnaround));
   };
 
   pages.shop = function () {
@@ -438,12 +425,12 @@
     const root = $("[data-product]");
 
     if (!p) {
-      document.title = "Print not found | Priya Watercolors";
+      document.title = "Print not found | Priya's Watercolors";
       root.innerHTML = `<div class="empty"><h1>We couldn't find that print</h1><p>It may have been removed from the shop.</p><a class="btn" href="shop.html">Back to the shop</a></div>`;
       return;
     }
 
-    document.title = `${p.title}, watercolor print | Priya Watercolors`;
+    document.title = `${p.title}, watercolor print | Priya's Watercolors`;
     const desc = $('meta[name="description"]');
     if (desc) desc.setAttribute("content", `${p.title}: a limited-run print of an original watercolor by Priya, ${sizesLabel(p)}, edition of ${p.edition}.`);
 
@@ -615,7 +602,7 @@
     dlg.innerHTML = `
       <div class="lightbox-inner">
         <img src="${artSrc(p, view)}" alt="${esc(view === "detail" ? `Close-up detail of ${p.title}` : p.alt)}">
-        <span class="watermark" aria-hidden="true">© Priya Watercolors</span>
+        <span class="watermark" aria-hidden="true">© Priya's Watercolors</span>
       </div>
       <form method="dialog"><button class="lightbox-close" aria-label="Close zoomed view">×</button></form>`;
     dlg.showModal();
@@ -923,7 +910,7 @@
       : `<strong>Now taking requests.</strong> Your painting is ready about ${esc(SITE.commissions.turnaround)} after you send the form. Nothing to pay up front.`;
 
     $("#type-options").innerHTML = COMMISSION_TYPES.map(
-      (t, i) => `<label class="chip"><input type="radio" id="type-${i}" name="type" value="${esc(t.label)}" aria-describedby="type-error"><span>${esc(t.label)} · ${commissionPrice(t)}</span></label>`
+      (t, i) => `<label class="chip"><input type="radio" id="type-${i}" name="type" value="${esc(t.label)}" aria-describedby="type-hint type-error"><span>${esc(t.label)} · ${commissionPrice(t)}</span></label>`
     ).join("");
     $("#commission-form").elements.size.value = `${COMMISSION_SIZE} original`;
 

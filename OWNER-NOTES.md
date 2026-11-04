@@ -29,7 +29,7 @@ her. For each **commission request** it:
 
 - adds a row to the **Requests** tab, with a **Status** column (New, Price confirmed, Painting,
   Finished, Paid, Shipped / delivered, Declined) and a **Notes** column for Priya;
-- saves the reference photos to a private Google Drive folder, "Priya Watercolors -
+- saves the reference photos to a private Google Drive folder, "Priya's Watercolors -
   commission photos", and links it from the row;
 - emails priyaswatercolors@gmail.com the full request with the photos attached. Replying
   to that email goes straight to the customer.
@@ -40,7 +40,7 @@ address, so nothing is lost silently.
 **Steps** (signed in as priyaswatercolors@gmail.com):
 
 1. Go to [sheets.new](https://sheets.new) to create a blank Google Sheet. Name it
-   **Priya Watercolors orders**.
+   **Priya's Watercolors orders**.
 2. In the sheet, open **Extensions → Apps Script**.
 3. Delete the sample code in `Code.gs`, paste in everything from
    `google-apps-script/Code.gs` in this repo, and click **Save** (the disk icon).
@@ -61,7 +61,7 @@ address, so nothing is lost silently.
      the sheet)
 
    Click **Deploy** and copy the **Web app URL**. It ends in `/exec`.
-6. Open the URL in a browser tab. It should say "Priya Watercolors commission form is
+6. Open the URL in a browser tab. It should say "Priya's Watercolors commission form is
    connected."
 7. Put the URL into `js/data.js` as `formUrl: "https://script.google.com/.../exec",`,
    then commit and push. Or paste it to Claude and it will do this for you.

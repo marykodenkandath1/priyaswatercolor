@@ -1,7 +1,7 @@
 /**
- * Priya Watercolors: print orders and commission requests -> Google Sheet + email.
+ * Priya's Watercolors: print orders and commission requests -> Google Sheet + email.
  *
- * Lives inside Priya's "Priya Watercolors orders" Google Sheet (Extensions >
+ * Lives inside Priya's "Priya's Watercolors orders" Google Sheet (Extensions >
  * Apps Script) and is deployed as a web app. The website POSTs each print
  * order (kind: "order") and commission request (kind: "commission") here as JSON.
  *
@@ -21,7 +21,7 @@ const NOTIFY_EMAIL = "priyaswatercolors@gmail.com";
 const SHEET_NAME = "Requests";
 const ORDERS_SHEET = "Orders";
 const ORDER_STATUSES = ["New", "Paid", "Shipped / dropped off", "Cancelled"];
-const PHOTO_FOLDER = "Priya Watercolors - commission photos";
+const PHOTO_FOLDER = "Priya's Watercolors - commission photos";
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024; // all photos together, matches the website
 const STATUSES = ["New", "Price confirmed", "Painting", "Finished", "Paid", "Shipped / delivered", "Declined"];
@@ -77,7 +77,7 @@ function setup() {
 
 /** Opening the web app URL in a browser shows this, which is handy for checking the deployment. */
 function doGet() {
-  return json_({ ok: true, message: "Priya Watercolors order and commission forms are connected." });
+  return json_({ ok: true, message: "Priya's Watercolors order and commission forms are connected." });
 }
 
 function doPost(e) {
@@ -175,7 +175,7 @@ function sendOrderEmail_(req, received) {
     subject: `New order ${str_(req.code)} — ${str_(req.total)}`,
     htmlBody: html,
     replyTo: str_(req.email),
-    name: "Priya Watercolors website",
+    name: "Priya's Watercolors website",
   });
 }
 
@@ -226,7 +226,7 @@ function sendEmail_(req, received, blobs, folder) {
     subject: `New commission request: ${str_(req.type) || "Commission"} from ${str_(req.name)}`,
     htmlBody: html,
     replyTo: str_(req.email),
-    name: "Priya Watercolors website",
+    name: "Priya's Watercolors website",
     attachments: blobs,
   });
 }
