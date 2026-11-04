@@ -111,4 +111,4 @@ Details are in `images/README.md`.
 - Replace every `PLACEHOLDER` in `js/data.js` and the bracketed "[Placeholder ...]" notes
   in the HTML pages.
 - Remove the "Prototype" bar at the top of the site (in `renderChrome`, `js/app.js`).
-- Set `VENMO_URL` to Priya's real Venmo username, and confirm the $8 shipping price.
+- Set `VENMO_URL` to Priya's real Venmo username.

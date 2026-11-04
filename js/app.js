@@ -479,7 +479,7 @@
             <div><dt>Framing</dt><dd>${esc(PRINT_DETAILS.framing)}</dd></div>
             <div><dt>Year</dt><dd>${PRINT_DETAILS.year}</dd></div>
           </dl>
-          <p class="fine muted">Ships within the US in 3 business days. <a href="faq.html#shipping">Shipping and returns</a></p>
+          <p class="fine muted">Ships within the US in 7 business days of your Venmo payment. <a href="faq.html#shipping">Shipping and returns</a></p>
         </div>
       </div>
 
@@ -1030,10 +1030,6 @@
       },
       type: () => (el("type").value ? "" : "Choose what you'd like painted."),
       photos: () => (files.length ? "" : "Add at least one reference photo."),
-      zip: () => {
-        const v = el("zip").value.trim();
-        return !v || /^\d{5}(-\d{4})?$/.test(v) ? "" : "Enter a 5-digit ZIP code.";
-      },
       terms: () => (el("terms").checked ? "" : "Please agree to the commission terms to send your request."),
     };
 
@@ -1105,11 +1101,8 @@
         size: el("size").value,
         neededBy: el("needed-by").value,
         gift: el("gift").checked ? el("occasion").value.trim() || "Yes" : "",
-        framing: el("framing").value,
         location: el("location").value,
         dropOff: dropOff.hidden ? "" : (form.querySelector('[name="dropoff"]:checked') || {}).value || "",
-        zip: el("zip").value.trim(),
-        heard: el("heard").value,
         sharePublicly: el("share").checked,
         sentOn: new Date().toISOString(),
       };
@@ -1168,11 +1161,8 @@
         ${row("Price", (() => { const t = COMMISSION_TYPES.find((x) => x.label === d.type); return t ? commissionPrice(t) + (t.price ? "" : ", depending on detail") : ""; })())}
         ${row("Needed by", d.neededBy ? fmt(d.neededBy + "T12:00") : "")}
         ${row("Gift or event", d.gift)}
-        ${row("Framing", d.framing)}
         ${row("Located in", d.location)}
         ${row("Open to drop-off", d.dropOff)}
-        ${row("Ship to ZIP", d.zip)}
-        ${row("Heard about us", d.heard)}
         ${row("Share the finished piece", d.sharePublicly ? "Yes, Priya may share it" : "Please keep it private")}
       </dl>`;
   };

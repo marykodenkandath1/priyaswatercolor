@@ -33,7 +33,7 @@ const SITE = {
   // Delivery choices at checkout. Shipping is US only; local drop-off is
   // free in the places Priya visits.
   delivery: {
-    shipPrice: 8, // PLACEHOLDER rate, per order
+    shipPrice: 2, // flat rate per order
     dropOffPlaces: ["Austin, TX", "Colorado"],
   },
 };
@@ -52,8 +52,7 @@ const PRINT_SIZES = [
 // price; a type with min and max shows a range ("depending on detail").
 const COMMISSION_SIZE = "5 × 7 in";
 const COMMISSION_TYPES = [
-  { label: "House", price: 50 },
-  { label: "Pet", min: 30, max: 50 },
+  { label: "House", min: 30, max: 50 },
   { label: "Wedding venue or special place", min: 30, max: 50 },
   { label: "Something else", min: 30, max: 50 },
 ];
