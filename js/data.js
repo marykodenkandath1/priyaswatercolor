@@ -14,9 +14,10 @@ const SITE = {
   name: "Priya Watercolors",
   // Contact links open an email to this address.
   email: "priyaswatercolors@gmail.com",
-  // Web app URL of the Google Apps Script that saves commission requests to
-  // Priya's Google Sheet and emails them to her. Setup: OWNER-NOTES.md.
-  commissionFormUrl: "",
+  // Web app URL of the Google Apps Script that saves print orders and
+  // commission requests to Priya's Google Sheet and emails them to her.
+  // Setup: OWNER-NOTES.md.
+  formUrl: "",
   instagram: "https://instagram.com/priyaswatercolors",
   instagramHandle: "@priyaswatercolors",
   portraitPhoto: "", // PLACEHOLDER: photo of Priya, e.g. "images/priya.jpg"
@@ -29,15 +30,16 @@ const SITE = {
     turnaround: "2 weeks",
   },
 
-  // C3: shipping by region. Priya ships within the US only at launch.
-  shipping: {
-    domesticOnly: true,
-    regions: [
-      { id: "us", label: "United States", price: 8 }, // PLACEHOLDER rate
-      { id: "intl", label: "International", price: 25 },
-    ],
+  // Delivery choices at checkout. Shipping is US only; local drop-off is
+  // free in the places Priya visits.
+  delivery: {
+    shipPrice: 8, // PLACEHOLDER rate, per order
+    dropOffPlaces: ["Austin, TX", "Colorado"],
   },
 };
+
+// Buyers pay for print orders on Venmo after placing the order.
+const VENMO_URL = "https://venmo.com/u/VENMO_USERNAME"; // PLACEHOLDER: Priya's Venmo username
 
 // Every print comes in these two sizes, at these prices. Landscape pieces
 // print the same sizes turned sideways (7 × 5 and 10 × 8).
@@ -65,7 +67,8 @@ const LOCATIONS = [
 ];
 
 // Prints of Priya's four originals, a limited run of 6 each (both sizes
-// together). Sizes and prices come from PRINT_SIZES above.
+// together). Sizes and prices come from PRINT_SIZES above. Orders are paid
+// by Venmo, so lower a print's `stock` by hand as orders come in (0 = sold out).
 const PRODUCTS = [
   {
     slug: "martini",

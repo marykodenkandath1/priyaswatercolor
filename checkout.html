@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout | Priya Watercolors</title>
+  <meta name="description" content="Place your print order. You pay with Venmo afterwards.">
+  <meta property="og:title" content="Checkout | Priya Watercolors">
+  <meta property="og:description" content="Place your print order. You pay with Venmo afterwards.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="checkout">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <div class="page-head">
+        <h1>Checkout</h1>
+        <p>Place your order here, then pay with Venmo on the next page.</p>
+      </div>
+      <div data-checkout>
+        <div class="checkout-layout">
+          <form id="order-form" class="form-card card-edge" novalidate>
+            <div class="error-summary" data-error-summary tabindex="-1" role="alert" hidden></div>
+
+            <fieldset class="form-section">
+              <legend>Your details</legend>
+              <div class="field" data-field="name">
+                <label for="name">Name <span class="req" aria-hidden="true">*</span></label>
+                <input type="text" id="name" name="name" autocomplete="name" required aria-describedby="name-error">
+                <p class="error" id="name-error"></p>
+              </div>
+              <div class="row-2">
+                <div class="field" data-field="email">
+                  <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+                  <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required aria-describedby="email-error">
+                  <p class="error" id="email-error"></p>
+                </div>
+                <div class="field">
+                  <label for="phone">Phone <span class="opt">(optional)</span></label>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend>Delivery</legend>
+              <div class="field" data-field="delivery">
+                <fieldset>
+                  <legend>How would you like to get your prints? <span class="req" aria-hidden="true">*</span></legend>
+                  <label class="check"><input type="radio" id="delivery-ship" name="delivery" value="ship" aria-describedby="delivery-error"><span>Ship it to me, <span data-ship-price></span> <span class="opt">(US only)</span></span></label>
+                  <label class="check"><input type="radio" id="delivery-dropoff" name="delivery" value="dropoff" aria-describedby="delivery-error"><span>Local drop-off in <span data-dropoff-places></span>, free</span></label>
+                </fieldset>
+                <p class="error" id="delivery-error"></p>
+              </div>
+
+              <div data-dropoff-fields hidden>
+                <div class="field" data-field="dropoff-place">
+                  <label for="dropoff-place">Drop-off area <span class="req" aria-hidden="true">*</span></label>
+                  <select id="dropoff-place" name="dropoff-place" aria-describedby="dropoff-place-hint dropoff-place-error"></select>
+                  <p class="hint" id="dropoff-place-hint">Priya will email you to arrange a time and place.</p>
+                  <p class="error" id="dropoff-place-error"></p>
+                </div>
+              </div>
+
+              <div data-ship-fields hidden>
+                <div class="field" data-field="address1">
+                  <label for="address1">Street address <span class="req" aria-hidden="true">*</span></label>
+                  <input type="text" id="address1" name="address1" autocomplete="address-line1" aria-describedby="address1-error">
+                  <p class="error" id="address1-error"></p>
+                </div>
+                <div class="field">
+                  <label for="address2">Apartment, suite, etc. <span class="opt">(optional)</span></label>
+                  <input type="text" id="address2" name="address2" autocomplete="address-line2">
+                </div>
+                <div class="row-3">
+                  <div class="field" data-field="city">
+                    <label for="city">City <span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="city" name="city" autocomplete="address-level2" aria-describedby="city-error">
+                    <p class="error" id="city-error"></p>
+                  </div>
+                  <div class="field" data-field="state">
+                    <label for="state">State <span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="state" name="state" autocomplete="address-level1" aria-describedby="state-error">
+                    <p class="error" id="state-error"></p>
+                  </div>
+                  <div class="field" data-field="zip">
+                    <label for="zip">ZIP code <span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" aria-describedby="zip-error">
+                    <p class="error" id="zip-error"></p>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <label for="notes">Notes <span class="opt">(optional)</span></label>
+              <textarea id="notes" name="notes" maxlength="1000" placeholder="Anything Priya should know, e.g. it's a gift"></textarea>
+            </div>
+
+            <div class="hp" aria-hidden="true">
+              <label for="website">Leave this field empty</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn btn-block">Place order</button>
+            <p class="fine muted center">Nothing is charged here. You'll pay with Venmo on the next page.</p>
+          </form>
+
+          <aside class="summary card-edge" aria-labelledby="order-summary-h">
+            <h2 id="order-summary-h" class="summary-title">Order summary</h2>
+            <ul class="order-items" data-order-lines></ul>
+            <dl>
+              <div><dt>Subtotal</dt><dd data-subtotal></dd></div>
+              <div><dt>Delivery</dt><dd data-shipping></dd></div>
+              <div class="summary-total"><dt>Total</dt><dd data-total></dd></div>
+            </dl>
+            <p class="fine"><a href="cart.html">Edit cart</a></p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

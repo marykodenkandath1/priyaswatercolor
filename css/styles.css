@@ -589,3 +589,16 @@ details ul { padding-left: 20px; margin-bottom: 1em; }
 .size-pick legend { font-weight: 500; padding: 0; margin-bottom: 8px; }
 .size-fixed { margin: 0 0 20px; }
 .size-fixed p { margin: 4px 0 0; }
+
+/* Checkout and order placed */
+.checkout-layout { display: grid; gap: 32px; align-items: start; }
+@media (min-width: 900px) { .checkout-layout { grid-template-columns: 1.5fr 1fr; gap: 48px; } .checkout-layout .summary { position: sticky; top: 24px; } }
+.summary .order-items { margin: 12px 0 8px; font-size: 0.95rem; }
+.row-3 { display: grid; gap: 0 16px; }
+@media (min-width: 700px) { .row-3 { grid-template-columns: 2fr 1fr 1fr; } }
+.order-code { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 34px 24px 24px; margin: 0 0 28px; text-align: center; }
+.order-code-value { font-family: var(--display); font-size: 2.6rem; font-weight: 600; letter-spacing: 0.04em; margin: 4px 0; }
+.order-code-total { font-size: 1.15rem; margin: 0 0 20px; }
+.btn-venmo { background: #0070c9; border-color: #0070c9; color: #fff; }
+.btn-venmo:hover { background: #005ba3; border-color: #005ba3; color: #fff; }
+.venmo-note { margin: 14px 0 0; font-weight: 500; }

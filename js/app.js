@@ -57,9 +57,8 @@
 
   const findProduct = (slug) => PRODUCTS.find((p) => p.slug === slug);
 
-  // Prints "sold" through the simulated checkout in this browser, by slug.
-  const soldCounts = () => local.get("pw-sold-counts", {});
-  const inStock = (p) => Math.max(0, p.stock - (soldCounts()[p.slug] || 0));
+  // Priya lowers `stock` in data.js as Venmo orders come in.
+  const inStock = (p) => Math.max(0, p.stock);
   const isSoldOut = (p) => inStock(p) === 0;
 
   // Cart lines are keyed "slug|size"; both sizes of a piece share its stock.
@@ -344,6 +343,7 @@
           </nav>
           <nav aria-label="Policies">
             <ul class="footer-links">
+              <li><a href="faq.html#payment">Paying with Venmo</a></li>
               <li><a href="faq.html#shipping">Shipping</a></li>
               <li><a href="faq.html#returns">Returns</a></li>
               <li><a href="faq.html#care">Caring for your print</a></li>
@@ -623,8 +623,6 @@
 
   pages.cart = function () {
     const root = $("[data-cart]");
-    const regions = SITE.shipping.domesticOnly ? SITE.shipping.regions.slice(0, 1) : SITE.shipping.regions;
-
     function render(notice = "") {
       const items = cart.items();
 
@@ -666,28 +664,12 @@
             <h2 id="summary-h" class="summary-title">Order summary</h2>
             <dl>
               <div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div>
-              <div>
-                <dt><label for="region">Ship to</label></dt>
-                <dd><select id="region">${regions.map((r) => `<option value="${r.id}">${r.label}</option>`).join("")}</select></dd>
-              </div>
-              <div><dt>Shipping</dt><dd data-ship></dd></div>
-              <div><dt>Sales tax</dt><dd class="muted">Calculated at checkout</dd></div>
-              <div class="summary-total"><dt>Estimated total</dt><dd data-total></dd></div>
+              <div><dt>Delivery</dt><dd>${deliveryNote()}</dd></div>
             </dl>
-            ${SITE.shipping.domesticOnly ? '<p class="fine muted">We ship within the United States only.</p>' : ""}
-            <button type="button" class="btn btn-block" data-checkout>Check out</button>
-            <p class="fine muted center">Guest checkout. Card, Apple Pay or Google Pay.</p>
+            <a class="btn btn-block" href="checkout.html">Check out</a>
+            <p class="fine muted center">You'll pay with Venmo after placing your order.</p>
           </aside>
         </div>`;
-
-      const region = $("#region");
-      const updateTotals = () => {
-        const r = regions.find((x) => x.id === region.value);
-        $("[data-ship]").textContent = money(r.price);
-        $("[data-total]").textContent = money(subtotal + r.price);
-      };
-      region.addEventListener("change", updateTotals);
-      updateTotals();
 
       $$("[data-qty]", root).forEach((sel) =>
         sel.addEventListener("change", () => {
@@ -704,10 +686,6 @@
           render();
           announce(`${p.title}, ${sizeLabel(p, size)}, removed from cart`);
         })
-      );
-
-      $("[data-checkout]").addEventListener("click", () =>
-        openCheckout(items, subtotal, regions.find((x) => x.id === region.value))
       );
     }
 
@@ -729,63 +707,187 @@
     );
   };
 
-  function openCheckout(items, subtotal, region) {
-    let dlg = $("#checkout");
-    if (!dlg) {
-      dlg = document.createElement("dialog");
-      dlg.id = "checkout";
-      dlg.className = "modal card-edge";
-      dlg.setAttribute("aria-labelledby", "checkout-h");
-      document.body.appendChild(dlg);
+  const places = () => SITE.delivery.dropOffPlaces.map((x) => x.replace(", TX", "")).join(" or ");
+  const deliveryNote = () => `${money(SITE.delivery.shipPrice)} shipping (US only), or free local drop-off in ${places()}`;
+
+  // Sends a print order or commission request to Priya's Google Apps Script
+  // (google-apps-script/Code.gs), which adds it to her sheet and emails her.
+  // A plain-text body keeps this a "simple" request, so there's no CORS preflight.
+  async function postForm(payload) {
+    if (!SITE.formUrl) throw new Error("SITE.formUrl is not set in js/data.js");
+    const res = await fetch(SITE.formUrl, { method: "POST", body: JSON.stringify(payload) });
+    const reply = await res.json();
+    if (!reply.ok) throw new Error(reply.error || "The form service said no.");
+  }
+
+  function showSendError(form, summary, button, label, why) {
+    console.error("Form not sent:", why);
+    button.disabled = false;
+    button.textContent = label;
+    summary.hidden = false;
+    summary.innerHTML = `<h2 class="error-summary-title">Sorry, that didn't send</h2>
+      <p>Nothing was charged. Please try again in a minute. If it still doesn't work, email
+      <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>`;
+    summary.focus();
+  }
+
+  pages.checkout = function () {
+    const items = cart.items();
+    const root = $("[data-checkout]");
+    if (!items.length) {
+      root.innerHTML = `<div class="empty"><p>Your cart is empty.</p><a class="btn" href="shop.html">Browse prints</a></div>`;
+      return;
     }
-    dlg.innerHTML = `
-      <h2 id="checkout-h">Hosted checkout goes here</h2>
-      <p>On the live site, this button opens the platform's secure checkout (for example Shopify): guest checkout, card, Apple Pay and Google Pay, with sales tax calculated automatically. No card details touch this site.</p>
-      <p class="muted">Prints are reserved while the buyer is in checkout, so the edition of ${items[0].p.edition} can't be oversold.</p>
-      <div class="modal-actions">
-        <button type="button" class="btn" data-simulate>Simulate a successful order</button>
-        <button type="button" class="btn btn-ghost" data-cancel>Back to cart</button>
-      </div>`;
-    $("[data-cancel]", dlg).addEventListener("click", () => dlg.close());
-    $("[data-simulate]", dlg).addEventListener("click", () => {
-      const sold = soldCounts();
-      items.forEach(({ p, qty }) => (sold[p.slug] = (sold[p.slug] || 0) + qty));
-      local.set("pw-sold-counts", sold);
-      session.set("pw-order", {
-        number: "PW-" + String(1000 + Math.floor(Math.random() * 9000)),
-        lines: items.map(({ key, qty }) => ({ key, qty })),
-        subtotal,
-        shipping: region.price,
-        region: region.label,
-      });
+
+    // One code per visit, so retrying after an error reuses it.
+    const code = "PW-" + String(1000 + Math.floor(Math.random() * 9000));
+    const subtotal = items.reduce((sum, { size, qty }) => sum + size.price * qty, 0);
+    const form = $("#order-form");
+    const el = (name) => form.elements[name];
+    const shipping = () => (el("delivery").value === "ship" ? SITE.delivery.shipPrice : 0);
+
+    $("[data-ship-price]").textContent = money(SITE.delivery.shipPrice);
+    $("[data-dropoff-places]").textContent = places();
+    $("#dropoff-place").innerHTML =
+      `<option value="">Choose one</option>` + SITE.delivery.dropOffPlaces.map((x) => `<option>${esc(x)}</option>`).join("");
+
+    $("[data-order-lines]").innerHTML = items
+      .map(
+        ({ p, size, qty }) =>
+          `<li><span>${esc(p.title)}, ${sizeLabel(p, size)} <span class="muted">× ${qty}</span></span><span>${money(size.price * qty)}</span></li>`
+      )
+      .join("");
+
+    function update() {
+      const ship = el("delivery").value === "ship";
+      const drop = el("delivery").value === "dropoff";
+      $("[data-ship-fields]").hidden = !ship;
+      $("[data-dropoff-fields]").hidden = !drop;
+      $$("[data-ship-fields] input, [data-ship-fields] select", form).forEach((c) => (c.disabled = !ship));
+      $("#dropoff-place").disabled = !drop;
+      $("[data-subtotal]").textContent = money(subtotal);
+      $("[data-shipping]").textContent = !el("delivery").value ? "Choose delivery" : shipping() ? money(shipping()) : "Free";
+      $("[data-total]").textContent = money(subtotal + shipping());
+    }
+    $$('[name="delivery"]', form).forEach((r) => r.addEventListener("change", update));
+    update();
+
+    const required = (name, msg) => () => (el(name).disabled || el(name).value.trim() ? "" : msg);
+    const rules = {
+      name: required("name", "Please enter your name."),
+      email: () =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el("email").value.trim()) ? "" : "Please enter a valid email so Priya can reach you.",
+      delivery: () => (el("delivery").value ? "" : "Choose shipping or local drop-off."),
+      "dropoff-place": required("dropoff-place", "Choose where you'd like it dropped off."),
+      address1: required("address1", "Enter a street address."),
+      city: required("city", "Enter a city."),
+      state: required("state", "Enter a state."),
+      zip: () => (el("zip").disabled || /^\d{5}(-\d{4})?$/.test(el("zip").value.trim()) ? "" : "Enter a 5-digit ZIP code."),
+    };
+    const anchorFor = (name) => (name === "delivery" ? "delivery-ship" : name);
+    let submitted = false;
+
+    function validate(name) {
+      const msg = rules[name]();
+      $(`#${name}-error`).textContent = msg;
+      $(`[data-field="${name}"]`).classList.toggle("has-error", Boolean(msg));
+      const c = el(name);
+      (c instanceof RadioNodeList ? Array.from(c) : [c]).forEach((x) => x.setAttribute("aria-invalid", msg ? "true" : "false"));
+      return msg;
+    }
+    form.addEventListener("input", () => submitted && Object.keys(rules).forEach(validate));
+    form.addEventListener("change", () => submitted && Object.keys(rules).forEach(validate));
+
+    const summary = $("[data-error-summary]");
+    const button = $("[type=submit]", form);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitted = true;
+      const errors = Object.keys(rules)
+        .map((n) => ({ name: n, msg: validate(n) }))
+        .filter((x) => x.msg);
+      if (errors.length) {
+        summary.hidden = false;
+        summary.innerHTML = `<h2 class="error-summary-title">Please fix ${errors.length} ${errors.length === 1 ? "thing" : "things"} before placing your order</h2>
+          <ul>${errors.map((x) => `<li><a href="#${anchorFor(x.name)}">${x.msg}</a></li>`).join("")}</ul>`;
+        summary.focus();
+        return;
+      }
+      summary.hidden = true;
+
+      // Honeypot: real people never fill this hidden field.
+      if (el("website").value) {
+        location.href = "order-confirmed.html";
+        return;
+      }
+
+      const ship = el("delivery").value === "ship";
+      const lines = items.map(({ p, size, qty }) => ({
+        title: p.title,
+        size: sizeLabel(p, size),
+        qty,
+        price: size.price,
+        lineTotal: size.price * qty,
+      }));
+      const order = {
+        kind: "order",
+        code,
+        name: el("name").value.trim(),
+        email: el("email").value.trim(),
+        phone: el("phone").value.trim(),
+        items: lines,
+        itemsText: lines.map((l) => `${l.title}, ${l.size} × ${l.qty} = ${money(l.lineTotal)}`).join("\n"),
+        subtotal: money(subtotal),
+        shipping: money(shipping()),
+        total: money(subtotal + shipping()),
+        delivery: ship ? "Ship (US)" : `Local drop-off in ${el("dropoff-place").value}`,
+        address: ship
+          ? [el("address1").value, el("address2").value, `${el("city").value.trim()}, ${el("state").value.trim()} ${el("zip").value.trim()}`]
+              .map((x) => x.trim())
+              .filter(Boolean)
+              .join("\n")
+          : "",
+        notes: el("notes").value.trim(),
+        honey: "",
+      };
+
+      button.disabled = true;
+      button.textContent = "Placing your order…";
+      announce("Placing your order");
+      try {
+        await postForm(order);
+      } catch (err) {
+        return showSendError(form, summary, button, "Place order", err);
+      }
+      session.set("pw-order", order);
       cart.clear();
       location.href = "order-confirmed.html";
     });
-    dlg.showModal();
-  }
+  };
 
   pages.order = function () {
     const order = session.get("pw-order", null);
     const root = $("[data-order]");
     if (!order) {
-      root.innerHTML = `<p>We couldn't find a recent order in this browser. If you just checked out, your confirmation email has the details.</p><a class="btn" href="shop.html">Back to the shop</a>`;
+      root.innerHTML = `<p>We couldn't find a recent order in this browser. If you placed one, use the order code you noted when paying on Venmo, or email <a href="mailto:${SITE.email}">${SITE.email}</a>.</p><a class="btn" href="shop.html">Back to the shop</a>`;
       return;
     }
     root.innerHTML = `
-      <p class="lead">Thank you! Order <strong>${esc(order.number)}</strong> is confirmed.</p>
-      <p>A confirmation email is on its way to you, and Priya has been notified. You'll get another email with a tracking link when your order ships, usually within 3 business days.</p>
+      <div class="order-code card-edge">
+        <p class="eyebrow">Your order code</p>
+        <p class="order-code-value">${esc(order.code)}</p>
+        <p class="order-code-total">Total: <strong>${esc(order.total)}</strong></p>
+        <a class="btn btn-block btn-venmo" href="${esc(VENMO_URL)}" target="_blank" rel="noopener">Pay on Venmo</a>
+        <p class="venmo-note">Please include your order code in the Venmo note. Your order ships once payment is received.</p>
+      </div>
+      <p>Thanks, ${esc(order.name.split(" ")[0])}! Priya has your order and will email <strong>${esc(order.email)}</strong> if she has any questions.</p>
       <ul class="order-items">
-        ${order.lines
-          .map(({ key, qty }) => {
-            const { p, size } = parseKey(key || "");
-            return p && size ? `<li><span>${esc(p.title)} print, ${sizeLabel(p, size)} <span class="muted">× ${qty}</span></span><span>${money(size.price * qty)}</span></li>` : "";
-          })
-          .join("")}
-        <li><span>Shipping to ${esc(order.region)}</span><span>${money(order.shipping)}</span></li>
-        <li class="order-total"><span>Total before tax</span><span>${money(order.subtotal + order.shipping)}</span></li>
+        ${order.items.map((l) => `<li><span>${esc(l.title)}, ${esc(l.size)} <span class="muted">× ${l.qty}</span></span><span>${money(l.lineTotal)}</span></li>`).join("")}
+        <li><span>${esc(order.delivery)}</span><span>${order.shipping === money(0) ? "Free" : esc(order.shipping)}</span></li>
+        <li class="order-total"><span>Total</span><span>${esc(order.total)}</span></li>
       </ul>
-      <p class="fine muted">Prototype note: stock for these prints is now reduced in this browser. Clear site data to reset.</p>
-      <a class="btn" href="shop.html">Keep browsing</a>`;
+      ${order.address ? `<p class="muted">Shipping to:<br>${esc(order.address).replace(/\n/g, "<br>")}</p>` : ""}
+      <a class="btn btn-ghost" href="shop.html">Keep browsing</a>`;
   };
 
   /* ---------------------------------------------------------------- *
@@ -1035,24 +1137,8 @@
         reader.readAsDataURL(file);
       });
 
-    // Sends the request, photos included, to Priya's Google Apps Script
-    // (google-apps-script/Code.gs), which fills her sheet and emails her.
     async function sendRequest(request) {
       const button = $("[type=submit]", form);
-      const summary = $("[data-error-summary]");
-      const fail = (why) => {
-        console.error("Commission request not sent:", why);
-        button.disabled = false;
-        button.textContent = "Send my request";
-        summary.hidden = false;
-        summary.innerHTML = `<h2 class="error-summary-title">Sorry, your request didn't send</h2>
-          <p>Please try again in a minute. If it still doesn't work, email your photos and details to
-          <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>`;
-        summary.focus();
-      };
-
-      if (!SITE.commissionFormUrl) return fail("SITE.commissionFormUrl is not set in js/data.js");
-
       button.disabled = true;
       button.textContent = "Sending…";
       announce("Sending your request");
@@ -1060,15 +1146,9 @@
         const photos = await Promise.all(
           files.map(async ({ file }) => ({ name: file.name, type: file.type, data: await readBase64(file) }))
         );
-        // A plain-text body keeps this a "simple" request, which Apps Script accepts without CORS preflight.
-        const res = await fetch(SITE.commissionFormUrl, {
-          method: "POST",
-          body: JSON.stringify({ ...request, photos, honey: "" }),
-        });
-        const reply = await res.json();
-        if (!reply.ok) return fail(reply.error);
+        await postForm({ kind: "commission", ...request, photos, honey: "" });
       } catch (err) {
-        return fail(err);
+        return showSendError(form, $("[data-error-summary]"), button, "Send my request", err);
       }
       session.set("pw-commission", request);
       location.href = "commission-thanks.html";

@@ -15,13 +15,13 @@ python3 -m http.server 8765
 
 Then open http://localhost:8765.
 
-## What's real and what's simulated
+## How it works
 
 | Part | Status |
 | --- | --- |
-| Commission request form | **Real once connected.** Sent to a Google Apps Script (`google-apps-script/Code.gs`) in Priya's account, which adds a row to her Google Sheet, saves the photos to her Drive and emails her the request. Needs a one-time setup (see owner notes). |
+| Print orders | **Real once connected.** The cart is kept in the buyer's browser. Checkout is an order form (details plus shipping or local drop-off) that sends the order to Priya's Google script, which adds it to the Orders tab and emails her. The buyer then pays on Venmo with their order code. No payment processor. |
+| Commission request form | **Real once connected.** Sent to the same Google Apps Script (`google-apps-script/Code.gs`) in Priya's account, which adds a row to her Google Sheet, saves the photos to her Drive and emails her the request. Needs a one-time setup (see owner notes). |
 | Contact | **Real.** "Contact" and footer links open an email to priyaswatercolors@gmail.com. |
-| Shop, cart and checkout | **Simulated.** "Simulate a successful order" only reduces stock in the visitor's own browser. Real payments need a hosted checkout (for example Shopify, per the PRD). |
 | Artwork and prices | **Placeholders**, all in `js/data.js`. |
 
 ## Decisions from Priya
@@ -41,12 +41,12 @@ Then open http://localhost:8765.
 | --- | --- |
 | `js/data.js` | All editable content: print sizes and prices, commission types and prices, stock, photos, email, turnaround, shipping |
 | `js/app.js` | Shared header and footer, shop, cart, commission form and sending it |
-| `google-apps-script/Code.gs` | Runs in Priya's Google Sheet: saves requests, photos and sends the email |
+| `google-apps-script/Code.gs` | Runs in Priya's Google Sheet: saves orders and commission requests (with photos) and emails her |
 | `css/styles.css` | Styles, including the gingham patterns |
 | `images/` | Real photos go here (see `images/README.md`) |
 | `index.html` | Home |
 | `shop.html`, `product.html?p=<slug>` | Print grid and print detail (photos, zoom, in-a-room view) |
-| `cart.html`, `order-confirmed.html` | Cart and the simulated checkout |
+| `cart.html`, `checkout.html`, `order-confirmed.html` | Cart, order form, and order code with the Pay on Venmo button |
 | `commissions.html`, `commission-thanks.html` | Commissions, request form and confirmation |
 | `about.html`, `faq.html` | About Priya; FAQ and policies |
 
