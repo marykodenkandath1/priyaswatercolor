@@ -19,7 +19,7 @@ const SITE = {
   // Web app URL of the Google Apps Script that saves print orders and
   // commission requests to Priya's Google Sheet and emails them to her.
   // Setup: OWNER-NOTES.md.
-  formUrl: "",
+  formUrl: "https://script.google.com/macros/s/AKfycbxMdXYCGf-Su5s17pScjuuegLK9lAWmhvuN2qwg06BbBO_n4A-Jc50BxbCMAXUjWyEK/exec",
   instagram: "https://instagram.com/priyaswatercolors",
   instagramHandle: "@priyaswatercolors",
   portraitPhoto: "", // PLACEHOLDER: photo of Priya, e.g. "images/priya.jpg"
