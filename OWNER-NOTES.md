@@ -108,7 +108,6 @@ Details are in `images/README.md`.
 
 ## Before launch
 
-- Replace every `PLACEHOLDER` in `js/data.js` and the bracketed "[Placeholder ...]" notes
-  in the HTML pages.
+- Replace every `PLACEHOLDER` in `js/data.js`.
 - Remove the "Prototype" bar at the top of the site (in `renderChrome`, `js/app.js`).
 - Set `VENMO_URL` to Priya's real Venmo username.

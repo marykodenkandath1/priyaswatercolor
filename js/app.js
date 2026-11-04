@@ -55,7 +55,7 @@
    * Stock and cart
    * ---------------------------------------------------------------- */
 
-  const findProduct = (slug) => PRODUCTS.find((p) => p.slug === slug);
+  const findProduct = (slug) => PRODUCTS.find((p) => p.slug === slug || (p.oldSlugs || []).includes(slug));
 
   // Priya lowers `stock` in data.js as Venmo orders come in.
   const inStock = (p) => Math.max(0, p.stock);
@@ -79,7 +79,7 @@
         if (!p || !size) return;
         const qty = Math.min(raw[key], inStock(p) - (used[p.slug] || 0));
         if (qty > 0) {
-          lines[key] = qty;
+          lines[lineKey(p.slug, size.id)] = (lines[lineKey(p.slug, size.id)] || 0) + qty;
           used[p.slug] = (used[p.slug] || 0) + qty;
         }
       });
@@ -330,7 +330,8 @@
           <div>
             <p class="wordmark wordmark-footer">Priya's <span>Watercolors</span></p>
             <p>Instagram <a href="${SITE.instagram}" rel="noopener">${SITE.instagramHandle}</a><br>
-            <a href="mailto:${SITE.email}">${SITE.email}</a></p>
+            <a href="mailto:${SITE.email}">${SITE.email}</a><br>
+            <a href="tel:${SITE.phoneLink}">${SITE.phone}</a></p>
           </div>
           <nav aria-label="Footer">
             <ul class="footer-links">
@@ -465,7 +466,7 @@
         </div>
 
         <div class="detail-info">
-          <p class="eyebrow">Limited-run print · edition of ${p.edition}</p>
+          <p class="eyebrow">Limited-run print</p>
           <h1>${esc(p.title)}</h1>
           <p class="price" data-price></p>
           <p class="avail" data-avail></p>
@@ -473,9 +474,6 @@
           <p class="story">${esc(p.story)}</p>
           <dl class="facts">
             <div><dt>Sizes</dt><dd>${PRINT_SIZES.map((s) => `${sizeLabelFull(p, s)}, ${money(s.price)}`).join("<br>")}</dd></div>
-            <div><dt>Medium</dt><dd>${esc(PRINT_DETAILS.medium)}</dd></div>
-            <div><dt>Paper</dt><dd>${esc(PRINT_DETAILS.paper)}</dd></div>
-            <div><dt>Edition</dt><dd>Limited to ${p.edition} prints</dd></div>
             <div><dt>Framing</dt><dd>${esc(PRINT_DETAILS.framing)}</dd></div>
             <div><dt>Year</dt><dd>${PRINT_DETAILS.year}</dd></div>
           </dl>
@@ -907,7 +905,7 @@
     }
     notice.innerHTML = SITE.commissions.bookedUntil
       ? `<strong>Currently booked until ${esc(SITE.commissions.bookedUntil)}.</strong> Send your request now to hold a spot; your ${esc(SITE.commissions.turnaround)} start then.`
-      : `<strong>Now taking requests.</strong> Your painting is ready about ${esc(SITE.commissions.turnaround)} after you send the form. Nothing to pay up front.`;
+      : `<strong>Now taking requests.</strong> Your painting is ready about ${esc(SITE.commissions.turnaround)} after you send the form. Want it bigger? It's $10 more and about 5 extra days to have your 5 × 7 enlarged. You'll get both in the mail!`;
 
     $("#type-options").innerHTML = COMMISSION_TYPES.map(
       (t, i) => `<label class="chip"><input type="radio" id="type-${i}" name="type" value="${esc(t.label)}" aria-describedby="type-hint type-error"><span>${esc(t.label)} · ${commissionPrice(t)}</span></label>`

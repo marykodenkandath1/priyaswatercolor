@@ -14,6 +14,8 @@ const SITE = {
   name: "Priya's Watercolors",
   // Contact links open an email to this address.
   email: "priyaswatercolors@gmail.com",
+  phone: "508-333-4830", // shown in the footer
+  phoneLink: "+15083334830",
   // Web app URL of the Google Apps Script that saves print orders and
   // commission requests to Priya's Google Sheet and emails them to her.
   // Setup: OWNER-NOTES.md.
@@ -52,9 +54,9 @@ const PRINT_SIZES = [
 // price; a type with min and max shows a range ("depending on detail").
 const COMMISSION_SIZE = "5 × 7 in";
 const COMMISSION_TYPES = [
-  { label: "House", min: 30, max: 50 },
-  { label: "Wedding venue or special place", min: 30, max: 50 },
-  { label: "Something else", min: 30, max: 50 },
+  { label: "House", min: 20, max: 50 },
+  { label: "Wedding venue or special place", min: 20, max: 50 },
+  { label: "Something else", min: 20, max: 50 },
 ];
 
 // "Where are you located?" on the house-portrait form. Picking a place with
@@ -80,36 +82,38 @@ const PRODUCTS = [
     featured: true,
     palette: ["#dfe8ec", "#b8cdd6", "#6f9a4f", "#8a96a3"],
     alt: "Watercolor of a martini glass with a green olive on a pick",
-    story: "A very cold martini, two olives' worth of green, and a lot of glassy blue. [Placeholder story. Priya to replace.]",
+    story: "Everyone's favorite drink!",
     photo: "", // PLACEHOLDER: e.g. "images/martini.jpg"
     photoDetail: "", // optional close-up photo
   },
   {
-    slug: "flatiron",
-    title: "Flatiron",
+    slug: "flatirons",
+    oldSlugs: ["flatiron"], // old links still work
+    title: "Flatirons",
     subject: "flatiron",
     orientation: "portrait",
     edition: 6,
     stock: 6,
     added: "2026-10-24",
     palette: ["#f1dcc4", "#d9a47c", "#a86a4a", "#5a4b46"],
-    alt: "Watercolor of the Flatiron Building's narrow prow in warm terracotta tones",
-    story: "The Flatiron's narrow prow catching the late afternoon light. [Placeholder story. Priya to replace.]",
-    photo: "", // PLACEHOLDER: e.g. "images/flatiron.jpg"
+    alt: "Watercolor of the Flatirons above Boulder, Colorado",
+    story: "What makes Boulder Boulder!",
+    photo: "", // PLACEHOLDER: e.g. "images/flatirons.jpg"
     photoDetail: "", // optional close-up photo
   },
   {
-    slug: "texas-stadium",
-    title: "Texas Stadium",
+    slug: "ut-stadium",
+    oldSlugs: ["texas-stadium"], // old links still work
+    title: "UT Stadium",
     subject: "stadium",
     orientation: "landscape",
     edition: 6,
     stock: 6,
     added: "2026-10-18",
     palette: ["#cfe0f2", "#b9a48f", "#5f9a52", "#bf3a3a"],
-    alt: "Watercolor of a Texas football stadium bowl seen from above with a green field",
-    story: "Game day from the top row: the bowl, the bright green field and a big Texas sky. [Placeholder story. Priya to replace.]",
-    photo: "", // PLACEHOLDER: e.g. "images/texas-stadium.jpg"
+    alt: "Watercolor of the UT football stadium bowl seen from above with a green field",
+    story: "Hook 'em Horns!",
+    photo: "", // PLACEHOLDER: e.g. "images/ut-stadium.jpg"
     photoDetail: "", // optional close-up photo
   },
   {
@@ -122,16 +126,14 @@ const PRODUCTS = [
     added: "2026-10-10",
     palette: ["#e6eef2", "#a7a29a", "#efe3d2", "#f2d15c"],
     alt: "Watercolor of half a dozen oysters on ice with a lemon wedge",
-    story: "Half a dozen on ice with a squeeze of lemon. [Placeholder story. Priya to replace.]",
+    story: "The world is your ____!",
     photo: "", // PLACEHOLDER: e.g. "images/oysters.jpg"
     photoDetail: "", // optional close-up photo
   },
 ];
 
-// Shared print details. PLACEHOLDER: Priya to confirm paper and printing.
+// Shared print details.
 const PRINT_DETAILS = {
-  medium: "Giclée print of the original watercolor",
-  paper: "Archival matte fine-art paper",
   framing: "Unframed, ships flat in a protective sleeve",
   year: 2026,
 };
