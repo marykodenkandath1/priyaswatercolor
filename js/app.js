@@ -57,7 +57,7 @@
 
   const findProduct = (slug) => PRODUCTS.find((p) => p.slug === slug || (p.oldSlugs || []).includes(slug));
 
-  // Priya lowers `stock` in data.js as Venmo orders come in.
+  // Priya lowers `stock` in data.js as orders come in.
   const inStock = (p) => Math.max(0, p.stock);
   const isSoldOut = (p) => inStock(p) === 0;
 
@@ -288,6 +288,17 @@
     { href: `mailto:${SITE.email}`, label: "Contact", page: "contact" },
   ];
 
+  // Vercel Web Analytics: cookieless page views, live site only. Turned on
+  // in the Vercel dashboard (project > Analytics).
+  function loadAnalytics() {
+    if (/^(localhost|127\.0\.0\.1|)$/.test(location.hostname)) return;
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    const s = document.createElement("script");
+    s.defer = true;
+    s.src = "/_vercel/insights/script.js";
+    document.head.appendChild(s);
+  }
+
   function renderChrome() {
     const page = document.body.dataset.page;
     const header = $("[data-site-header]");
@@ -339,7 +350,7 @@
               <li><a href="commissions.html">Commissions</a></li>
               <li><a href="about.html">About Priya</a></li>
               <li><a href="mailto:${SITE.email}">Contact</a></li>
-              <li><a href="faq.html#payment">Paying with Venmo</a></li>
+              <li><a href="faq.html#payment">Paying with Venmo or Zelle</a></li>
               <li><a href="faq.html#commission-terms">Commission terms</a></li>
             </ul>
           </nav>
@@ -477,7 +488,7 @@
             <div><dt>Framing</dt><dd>${esc(PRINT_DETAILS.framing)}</dd></div>
             <div><dt>Year</dt><dd>${PRINT_DETAILS.year}</dd></div>
           </dl>
-          <p class="fine muted">Ships within the US in 7 business days of your Venmo payment. <a href="faq.html#shipping">Shipping and returns</a></p>
+          <p class="fine muted">Ships within the US in 7 business days of your payment. <a href="faq.html#shipping">Shipping and returns</a></p>
         </div>
       </div>
 
@@ -652,7 +663,7 @@
               <div><dt>Delivery</dt><dd>${deliveryNote()}</dd></div>
             </dl>
             <a class="btn btn-block" href="checkout.html">Check out</a>
-            <p class="fine muted center">You'll pay with Venmo after placing your order.</p>
+            <p class="fine muted center">You'll pay by Venmo or Zelle right after placing your order.</p>
           </aside>
         </div>`;
 
@@ -854,16 +865,23 @@
     const order = session.get("pw-order", null);
     const root = $("[data-order]");
     if (!order) {
-      root.innerHTML = `<p>We couldn't find a recent order in this browser. If you placed one, use the order code you noted when paying on Venmo, or email <a href="mailto:${SITE.email}">${SITE.email}</a>.</p><a class="btn" href="shop.html">Back to the shop</a>`;
+      root.innerHTML = `<p>We couldn't find a recent order in this browser. If you placed one, use the order number you put in your payment note, or email <a href="mailto:${SITE.email}">${SITE.email}</a>.</p><a class="btn" href="shop.html">Back to the shop</a>`;
       return;
     }
+    const shipped = /^Ship/.test(order.delivery);
     root.innerHTML = `
       <div class="order-code card-edge">
-        <p class="eyebrow">Your order code</p>
+        <p class="eyebrow">Your order number</p>
         <p class="order-code-value">${esc(order.code)}</p>
-        <p class="order-code-total">Total: <strong>${esc(order.total)}</strong></p>
+        <button type="button" class="btn btn-ghost btn-copy" data-copy-code>Copy order number</button>
+        <p class="order-code-total">Total: <strong>${esc(order.total)}</strong>${shipped ? ` <span class="muted">(includes ${esc(order.shipping)} shipping)</span>` : ""}</p>
+        <p class="venmo-note">To complete your order, send payment by Venmo (${esc(PAYMENT.venmo)}) or Zelle (<span class="nowrap">${esc(PAYMENT.zelle)}</span>). Please include your order number in the payment note.</p>
         <a class="btn btn-block btn-venmo" href="${esc(VENMO_URL)}" target="_blank" rel="noopener">Pay on Venmo</a>
-        <p class="venmo-note">Please include your order code in the Venmo note. Your order ships once payment is received.</p>
+        <p class="fine">${
+          shipped
+            ? "Your prints ship within 7 business days of payment, and you'll get a tracking link by email when your order is on its way."
+            : "Priya will email you to arrange the drop-off once payment is received."
+        }</p>
       </div>
       <p>Thanks, ${esc(order.name.split(" ")[0])}! Priya has your order and will email <strong>${esc(order.email)}</strong> if she has any questions.</p>
       <ul class="order-items">
@@ -873,6 +891,17 @@
       </ul>
       ${order.address ? `<p class="muted">Shipping to:<br>${esc(order.address).replace(/\n/g, "<br>")}</p>` : ""}
       <a class="btn btn-ghost" href="shop.html">Keep browsing</a>`;
+
+    const copy = $("[data-copy-code]", root);
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(order.code);
+        copy.textContent = "Copied!";
+      } catch {
+        // No clipboard access: select the number so it can be copied by hand.
+        getSelection().selectAllChildren($(".order-code-value", root));
+      }
+    });
   };
 
   /* ---------------------------------------------------------------- *
@@ -1198,6 +1227,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     renderChrome();
+    loadAnalytics();
     const page = pages[document.body.dataset.page];
     if (page) page();
   });

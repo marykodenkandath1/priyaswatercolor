@@ -6,7 +6,7 @@
  * order (kind: "order") and commission request (kind: "commission") here as JSON.
  *
  * Print orders: adds a row to the "Orders" tab and emails NOTIFY_EMAIL
- * ("New order PW-4821 — $30"). Buyers pay on Venmo afterwards.
+ * ("New order PW-4821 — $30"). Buyers pay by Venmo or Zelle afterwards.
  *
  * Commission requests:
  *   1. saves the reference photos to a private Google Drive folder,
@@ -158,7 +158,7 @@ function sendOrderEmail_(req, received) {
       : "";
   const html =
     `<p>New print order <strong>${esc_(req.code)}</strong> from the website, received ${esc_(received.toLocaleString())}. ` +
-    `The buyer was asked to pay <strong>${esc_(req.total)}</strong> on Venmo with ${esc_(req.code)} in the note.</p>` +
+    `The buyer was asked to pay <strong>${esc_(req.total)}</strong> by Venmo or Zelle with ${esc_(req.code)} in the payment note.</p>` +
     `<table style="border-collapse:collapse;font-family:sans-serif;font-size:14px">${items}` +
     `<tr><td style="padding:4px 12px 4px 0">${esc_(req.delivery)}</td><td></td><td align="right">${esc_(req.shipping)}</td></tr>` +
     `<tr><th align="left" style="padding:8px 12px 4px 0">Total</th><td></td><th align="right">${esc_(req.total)}</th></tr></table>` +

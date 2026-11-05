@@ -19,7 +19,7 @@ Then open http://localhost:8765.
 
 | Part | Status |
 | --- | --- |
-| Print orders | **Real once connected.** The cart is kept in the buyer's browser. Checkout is an order form (details plus shipping or local drop-off) that sends the order to Priya's Google script, which adds it to the Orders tab and emails her. The buyer then pays on Venmo with their order code. No payment processor. |
+| Print orders | **Real once connected.** The cart is kept in the buyer's browser. Checkout is an order form (details plus shipping or local drop-off) that sends the order to Priya's Google script, which adds it to the Orders tab and emails her. The buyer then pays by Venmo or Zelle with their order number in the note. No payment processor. |
 | Commission request form | **Real once connected.** Sent to the same Google Apps Script (`google-apps-script/Code.gs`) in Priya's account, which adds a row to her Google Sheet, saves the photos to her Drive and emails her the request. Needs a one-time setup (see owner notes). |
 | Contact | **Real.** "Contact" and footer links open an email to priyaswatercolors@gmail.com. |
 | Artwork and prices | **Placeholders**, all in `js/data.js`. |
@@ -46,7 +46,7 @@ Then open http://localhost:8765.
 | `images/` | Real photos go here (see `images/README.md`) |
 | `index.html` | Home |
 | `shop.html`, `product.html?p=<slug>` | Print grid and print detail (photos, zoom, in-a-room view) |
-| `cart.html`, `checkout.html`, `order-confirmed.html` | Cart, order form, and order code with the Pay on Venmo button |
+| `cart.html`, `checkout.html`, `order-confirmed.html` | Cart, order form, and order number, Venmo and Zelle details and the Pay on Venmo button |
 | `commissions.html`, `commission-thanks.html` | Commissions, request form and confirmation |
 | `about.html`, `faq.html` | About Priya; FAQ and policies |
 

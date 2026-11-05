@@ -40,8 +40,10 @@ const SITE = {
   },
 };
 
-// Buyers pay for print orders on Venmo after placing the order.
-const VENMO_URL = "https://venmo.com/u/VENMO_USERNAME"; // PLACEHOLDER: Priya's Venmo username
+// Buyers pay by Venmo or Zelle after placing an order (prints) or once
+// Priya sends a photo of the finished painting (commissions).
+const VENMO_URL = "https://venmo.com/u/Pkodenkandath";
+const PAYMENT = { venmo: "@Pkodenkandath", zelle: "508-333-4830" };
 
 // Every print comes in these two sizes, at these prices. Landscape pieces
 // print the same sizes turned sideways (7 × 5 and 10 × 8).
@@ -69,7 +71,7 @@ const LOCATIONS = [
 
 // Prints of Priya's four originals, a limited run of 6 each (both sizes
 // together). Sizes and prices come from PRINT_SIZES above. Orders are paid
-// by Venmo, so lower a print's `stock` by hand as orders come in (0 = sold out).
+// by Venmo or Zelle, so lower a print's `stock` by hand as orders come in (0 = sold out).
 const PRODUCTS = [
   {
     slug: "martini",

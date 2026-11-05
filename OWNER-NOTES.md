@@ -3,22 +3,25 @@
 Plain-language notes for keeping the site up to date. Almost everything lives in one file,
 **`js/data.js`**. Search it for `PLACEHOLDER` to find every value that still needs a real one.
 
-## How print orders and Venmo work
+## How print orders and payment work
 
 Buyers add prints to the cart and place an order on the checkout page (no payment there).
-They get an order code like **PW-4821** and a **Pay on Venmo** button, and are asked to put
-the code in the Venmo note. Priya gets an email "New order PW-4821 — $30" and a row in the
+They get an order number like **PW-4821**, Priya's Venmo (@Pkodenkandath) and Zelle
+(508-333-4830) details and a **Pay on Venmo** button, and are asked to put the number in
+the payment note. Priya gets an email "New order PW-4821 — $30" and a row in the
 **Orders** tab of her sheet.
 
 For each order:
 
-1. Wait for the Venmo payment with that code. Set the row's Status to **Paid**.
+1. Wait for the Venmo or Zelle payment with that number. Set the row's Status to **Paid**.
 2. Ship it (or email the buyer to arrange local drop-off), then set **Shipped / dropped off**.
 3. Lower that print's `stock` in `js/data.js` so the site shows the right number left.
-   The site can't do this automatically, because payment happens on Venmo.
+   The site can't do this automatically, because payment happens on Venmo or Zelle.
+   Unpaid orders don't hold stock, so check `stock` before confirming a last print.
 
-The Venmo link is `VENMO_URL` in `js/data.js`. Change `VENMO_USERNAME` to Priya's
-Venmo username before launch. The shipping price and drop-off places are in
+The Venmo link is `VENMO_URL` and the Venmo and Zelle details shown to buyers are
+`PAYMENT`, both in `js/data.js`. The FAQ and commissions pages also mention them in words.
+The shipping price and drop-off places are in
 `SITE.delivery`.
 
 ## Connect the order and commission forms to Google (one time, about 10 minutes)
@@ -87,19 +90,23 @@ Good to know:
 | Print sizes or prices (shared by every print) | `PRINT_SIZES` |
 | A print's title, story or photo | that print in `PRODUCTS` |
 | How many of a print are left | `stock` on that print (lower it as orders are paid) |
-| Venmo link | `VENMO_URL` |
+| Venmo link, Venmo and Zelle details | `VENMO_URL`, `PAYMENT` |
 | Shipping price or drop-off places | `SITE.delivery` |
 | Commission types or prices | `COMMISSION_TYPES` (and `COMMISSION_SIZE`) |
 | Drop-off locations | `LOCATIONS` (`dropOff: true` shows the drop-off question) |
 | Turnaround time | `SITE.commissions.turnaround` |
 | Pause commissions | `SITE.commissions.open: false` |
 | Show "booked until" | `SITE.commissions.bookedUntil: "March 1"` |
-| Shipping rate | `SITE.shipping` |
 | Email or Instagram | `SITE.email`, `SITE.instagram`, `SITE.instagramHandle` |
 
 The written copy on each page (FAQ answers, About text and so on) is in that page's
 `.html` file. The FAQ, the home page and the commissions page description also mention
 the prices in words, so update those too if prices change.
+
+## Analytics
+
+The live site counts page views with Vercel Web Analytics, which uses no cookies. See the
+numbers in the Vercel dashboard: project **priyas-watercolors** > **Analytics**.
 
 ## Adding real photos
 
@@ -110,4 +117,3 @@ Details are in `images/README.md`.
 
 - Replace every `PLACEHOLDER` in `js/data.js`.
 - Remove the "Prototype" bar at the top of the site (in `renderChrome`, `js/app.js`).
-- Set `VENMO_URL` to Priya's real Venmo username.

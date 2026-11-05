@@ -606,4 +606,8 @@ main:has(> .section-alt:last-child) + .site-footer { margin-top: 0; }
 .order-code-total { font-size: 1.15rem; margin: 0 0 20px; }
 .btn-venmo { background: #0070c9; border-color: #0070c9; color: #fff; }
 .btn-venmo:hover { background: #005ba3; border-color: #005ba3; color: #fff; }
-.venmo-note { margin: 14px 0 0; font-weight: 500; }
+.venmo-note { margin: 0 0 16px; font-weight: 500; }
+.order-code-value { user-select: all; }
+.nowrap { white-space: nowrap; }
+.btn-copy { padding: 8px 18px; font-size: 0.9rem; margin: 0 0 16px; }
+.order-code .fine { margin: 14px 0 0; }
