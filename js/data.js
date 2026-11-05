@@ -83,10 +83,10 @@ const PRODUCTS = [
     added: "2026-10-30",
     featured: true,
     palette: ["#dfe8ec", "#b8cdd6", "#6f9a4f", "#8a96a3"],
-    alt: "Watercolor of a martini glass with a green olive on a pick",
+    alt: "Watercolor of a martini glass with three green olives on a pick",
     story: "Everyone's favorite drink!",
-    photo: "", // PLACEHOLDER: e.g. "images/martini.jpg"
-    photoDetail: "", // optional close-up photo
+    photo: "images/martini.jpg",
+    photoDetail: "images/martini-detail.jpg", // close-up
   },
   {
     slug: "flatirons",
@@ -98,10 +98,10 @@ const PRODUCTS = [
     stock: 6,
     added: "2026-10-24",
     palette: ["#f1dcc4", "#d9a47c", "#a86a4a", "#5a4b46"],
-    alt: "Watercolor of the Flatirons above Boulder, Colorado",
+    alt: "Watercolor of the Flatirons rock formations above Boulder, Colorado, in soft greens and purples",
     story: "What makes Boulder Boulder!",
-    photo: "", // PLACEHOLDER: e.g. "images/flatirons.jpg"
-    photoDetail: "", // optional close-up photo
+    photo: "images/flatirons.jpg",
+    photoDetail: "images/flatirons-detail.jpg", // close-up
   },
   {
     slug: "ut-stadium",
@@ -113,10 +113,10 @@ const PRODUCTS = [
     stock: 6,
     added: "2026-10-18",
     palette: ["#cfe0f2", "#b9a48f", "#5f9a52", "#bf3a3a"],
-    alt: "Watercolor of the UT football stadium bowl seen from above with a green field",
+    alt: "Watercolor of the UT football stadium seen from above, with a burnt orange Longhorn logo at midfield",
     story: "Hook 'em Horns!",
-    photo: "", // PLACEHOLDER: e.g. "images/ut-stadium.jpg"
-    photoDetail: "", // optional close-up photo
+    photo: "images/ut-stadium.jpg",
+    photoDetail: "images/ut-stadium-detail.jpg", // close-up
   },
   {
     slug: "oysters",
@@ -127,10 +127,10 @@ const PRODUCTS = [
     stock: 6,
     added: "2026-10-10",
     palette: ["#e6eef2", "#a7a29a", "#efe3d2", "#f2d15c"],
-    alt: "Watercolor of half a dozen oysters on ice with a lemon wedge",
+    alt: "Watercolor of three open oyster shells with blue-tinged insides",
     story: "The world is your ____!",
-    photo: "", // PLACEHOLDER: e.g. "images/oysters.jpg"
-    photoDetail: "", // optional close-up photo
+    photo: "images/oysters.jpg",
+    photoDetail: "images/oysters-detail.jpg", // close-up
   },
 ];
 
