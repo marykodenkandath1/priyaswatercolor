@@ -155,7 +155,7 @@
     };
   }
 
-  function artSVG(p, view) {
+  function artSVG(p) {
     const seed = hash(p.slug);
     const r = rng(seed);
     const W = 1000;
@@ -238,11 +238,8 @@
       }
     }
 
-    // "detail" crops into the middle of the piece, like a close-up photo.
-    const viewBox = view === "detail" ? `${W * 0.3} ${H * 0.3} ${W * 0.4} ${H * 0.4}` : `0 0 ${W} ${H}`;
-
     return (
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="${viewBox}">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">` +
       `<defs>` +
       `<filter id="w" x="-20%" y="-20%" width="140%" height="140%">` +
       `<feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="3" seed="${seed % 97}" result="n"/>` +
@@ -259,19 +256,18 @@
   }
 
   const artCache = new Map();
-  function artSrc(p, view = "full") {
+  function artSrc(p) {
     // A real photo from data.js wins over the generated stand-in.
-    if (p.photo) return (view === "detail" && p.photoDetail) || p.photo;
-    const key = p.slug + ":" + view;
-    if (!artCache.has(key)) {
-      artCache.set(key, "data:image/svg+xml;charset=utf-8," + encodeURIComponent(artSVG(p, view)));
+    if (p.photo) return p.photo;
+    if (!artCache.has(p.slug)) {
+      artCache.set(p.slug, "data:image/svg+xml;charset=utf-8," + encodeURIComponent(artSVG(p)));
     }
-    return artCache.get(key);
+    return artCache.get(p.slug);
   }
 
-  function artImg(p, { view = "full", lazy = true, alt } = {}) {
+  function artImg(p, { lazy = true, alt } = {}) {
     const h = Math.round((1000 * p.h) / p.w);
-    return `<img src="${artSrc(p, view)}" width="1000" height="${h}" alt="${esc(alt || p.alt || p.title)}"${
+    return `<img src="${artSrc(p)}" width="1000" height="${h}" alt="${esc(alt || p.alt || p.title)}"${
       lazy ? ' loading="lazy"' : ""
     } decoding="async">`;
   }
@@ -446,34 +442,14 @@
     const desc = $('meta[name="description"]');
     if (desc) desc.setAttribute("content", `${p.title}: a limited-run print of an original watercolor by Priya, ${sizesLabel(p)}, edition of ${p.edition}.`);
 
-    // Gallery views stand in for the 3–6 photos per piece (S4).
-    const views = [
-      { id: "full", label: "Full print", zoom: true },
-      { id: "detail", label: "Close-up detail", zoom: true },
-      { id: "room", label: "In a room, to scale", zoom: false },
-    ];
-
-    function viewHTML(v) {
-      if (v.id === "room") return roomMockup(p, chosenSize());
-      return `<div class="mat mat-stage"><div class="mat-inner">${artImg(p, { view: v.id, lazy: false, alt: v.id === "detail" ? `Close-up detail of ${p.title}` : p.alt })}</div></div>`;
-    }
-
     root.innerHTML = `
       <nav class="crumbs" aria-label="Breadcrumb"><a href="shop.html">Shop prints</a> <span aria-hidden="true">/</span> <span aria-current="page">${esc(p.title)}</span></nav>
       <div class="detail">
         <div class="detail-media">
-          <div class="stage" data-stage></div>
-          <div class="thumbs" role="group" aria-label="Photos">
-            ${views
-              .map(
-                (v, i) => `
-              <button type="button" class="thumb" data-view="${v.id}" aria-pressed="${i === 0}" aria-label="${v.label}">
-                ${v.id === "room" ? '<span class="thumb-room" aria-hidden="true"></span>' : `<span class="thumb-img">${artImg(p, { view: v.id, alt: "" })}</span>`}
-              </button>`
-              )
-              .join("")}
-          </div>
-          <p class="fine muted">Photographed in daylight. Colors can look slightly different from screen to screen.</p>
+          <button type="button" class="stage-zoom" aria-label="Zoom in on ${esc(p.title)}" data-zoom>
+            <div class="mat mat-stage"><div class="mat-inner">${artImg(p, { lazy: false })}</div></div>
+            <span class="zoom-hint" aria-hidden="true">Tap to zoom</span>
+          </button>
         </div>
 
         <div class="detail-info">
@@ -497,23 +473,10 @@
         <ul class="grid grid-3" data-similar></ul>
       </section>`;
 
-    // Stage and thumbnails
+    $("[data-zoom]", root).addEventListener("click", () => openLightbox(p));
+
     let sizeId = PRINT_SIZES[0].id;
     const chosenSize = () => findSize(sizeId);
-    let shown = 0;
-    const stage = $("[data-stage]");
-    function show(i) {
-      shown = i;
-      const v = views[i];
-      stage.innerHTML = v.zoom
-        ? `<button type="button" class="stage-zoom" aria-label="Zoom in on ${esc(v.label.toLowerCase())}">${viewHTML(v)}<span class="zoom-hint" aria-hidden="true">Tap to zoom</span></button>`
-        : viewHTML(v);
-      $$(".thumb", root).forEach((t, j) => t.setAttribute("aria-pressed", String(j === i)));
-      const zoomBtn = $(".stage-zoom", stage);
-      if (zoomBtn) zoomBtn.addEventListener("click", () => openLightbox(p, v.id));
-    }
-    $$(".thumb", root).forEach((t, i) => t.addEventListener("click", () => show(i)));
-    show(0);
 
     // Buy box
     function renderBuy() {
@@ -561,7 +524,6 @@
         r.addEventListener("change", () => {
           sizeId = r.value;
           renderBuy();
-          if (views[shown].id === "room") show(shown);
           $(`[name="print-size"][value="${sizeId}"]`).focus();
         })
       );
@@ -582,21 +544,7 @@
     $("[data-similar]").innerHTML = others.map((o) => card(o)).join("");
   };
 
-  function roomMockup(p, size) {
-    // The sofa is about 84 in wide and spans 64% of the wall, so the print
-    // (plus roughly 2 in of frame or mat on each side) is drawn to the same scale.
-    const width = ((printDims(p, size).w + 4) * 64) / 84;
-    return `
-      <div class="room" role="img" aria-label="${esc(p.title)}, ${sizeLabel(p, size)}, shown to scale on a wall above an 84-inch sofa">
-        <div class="room-art" style="width:${width}%">
-          <div class="room-frame">${artImg(p, { lazy: false, alt: "" })}</div>
-        </div>
-        <div class="room-sofa"><span></span></div>
-        <div class="room-floor"></div>
-      </div>`;
-  }
-
-  function openLightbox(p, view) {
+  function openLightbox(p) {
     let dlg = $("#lightbox");
     if (!dlg) {
       dlg = document.createElement("dialog");
@@ -610,7 +558,7 @@
     dlg.setAttribute("aria-label", `${p.title}, zoomed`);
     dlg.innerHTML = `
       <div class="lightbox-inner">
-        <img src="${artSrc(p, view)}" alt="${esc(view === "detail" ? `Close-up detail of ${p.title}` : p.alt)}">
+        <img src="${artSrc(p)}" alt="${esc(p.alt)}">
         <span class="watermark" aria-hidden="true">© Priya's Watercolors</span>
       </div>
       <form method="dialog"><button class="lightbox-close" aria-label="Close zoomed view">×</button></form>`;

@@ -86,7 +86,6 @@ const PRODUCTS = [
     alt: "Watercolor of a martini glass with three green olives on a pick",
     story: "Everyone's favorite drink!",
     photo: "images/martini.jpg",
-    photoDetail: "images/martini-detail.jpg", // close-up
   },
   {
     slug: "flatirons",
@@ -101,7 +100,6 @@ const PRODUCTS = [
     alt: "Watercolor of the Flatirons rock formations above Boulder, Colorado, in soft greens and purples",
     story: "What makes Boulder Boulder!",
     photo: "images/flatirons.jpg",
-    photoDetail: "images/flatirons-detail.jpg", // close-up
   },
   {
     slug: "ut-stadium",
@@ -116,7 +114,6 @@ const PRODUCTS = [
     alt: "Watercolor of the UT football stadium seen from above, with a burnt orange Longhorn logo at midfield",
     story: "Hook 'em Horns!",
     photo: "images/ut-stadium.jpg",
-    photoDetail: "images/ut-stadium-detail.jpg", // close-up
   },
   {
     slug: "oysters",
@@ -130,7 +127,6 @@ const PRODUCTS = [
     alt: "Watercolor of three open oyster shells with blue-tinged insides",
     story: "The world is your ____!",
     photo: "images/oysters.jpg",
-    photoDetail: "images/oysters-detail.jpg", // close-up
   },
 ];
 

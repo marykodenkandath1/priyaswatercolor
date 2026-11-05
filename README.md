@@ -45,7 +45,7 @@ Then open http://localhost:8765.
 | `css/styles.css` | Styles, including the gingham patterns |
 | `images/` | Real photos go here (see `images/README.md`) |
 | `index.html` | Home |
-| `shop.html`, `product.html?p=<slug>` | Print grid and print detail (photos, zoom, in-a-room view) |
+| `shop.html`, `product.html?p=<slug>` | Print grid and print detail (photo with zoom) |
 | `cart.html`, `checkout.html`, `order-confirmed.html` | Cart, order form, and order number, Venmo and Zelle details and the Pay on Venmo button |
 | `commissions.html`, `commission-thanks.html` | Commissions, request form and confirmation |
 | `about.html`, `faq.html` | About Priya; FAQ and policies |
