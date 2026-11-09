@@ -458,7 +458,7 @@
           <p class="price" data-price></p>
           <p class="avail" data-avail></p>
           <div data-buy></div>
-          <p class="story">${esc(p.story)}</p>
+          ${p.story ? `<p class="story">${esc(p.story)}</p>` : ""}
           <dl class="facts">
             <div><dt>Sizes</dt><dd>${PRINT_SIZES.map((s) => `${sizeLabelFull(p, s)}, ${money(s.price)}`).join("<br>")}</dd></div>
             <div><dt>Framing</dt><dd>${esc(PRINT_DETAILS.framing)}</dd></div>

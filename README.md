@@ -1,6 +1,6 @@
 # Priya's Watercolors
 
-Website for Priya's Watercolors: limited-run prints of four watercolors and 5 × 7
+Website for Priya's Watercolors: limited-run prints of six watercolors and 5 × 7
 original commissions. It is a static site (HTML, CSS and plain JavaScript) with no build step
 and no dependencies.
 
@@ -26,7 +26,7 @@ Then open http://localhost:8765.
 
 ## Decisions from Priya
 
-- **Shop:** prints of Martini, Flatirons, UT Stadium and Oysters, 6 of each (both sizes
+- **Shop:** prints of Martini, Flatirons, UT Stadium, Oysters, Austin Motel and De Nada, 6 of each (both sizes
   together). Every print comes in 5 × 7 ($8) or 8 × 10 ($18).
 - **Commissions:** 5 × 7 originals only, $20–$50 depending on detail (house, wedding
   venue or special place, something else). Ready about 2 weeks after the form is sent, no deposit.

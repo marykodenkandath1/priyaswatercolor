@@ -69,7 +69,7 @@ const LOCATIONS = [
   { label: "Somewhere else in the US", dropOff: false },
 ];
 
-// Prints of Priya's four originals, a limited run of 6 each (both sizes
+// Prints of Priya's originals, a limited run of 6 each (both sizes
 // together). Sizes and prices come from PRINT_SIZES above. Orders are paid
 // by Venmo or Zelle, so lower a print's `stock` by hand as orders come in (0 = sold out).
 const PRODUCTS = [
@@ -127,6 +127,34 @@ const PRODUCTS = [
     alt: "Watercolor of three open oyster shells with blue-tinged insides",
     story: "The world is your ____!",
     photo: "images/oysters.jpg",
+  },
+  // The two below were added last; their earlier `added` dates keep them after
+  // the first four in the "Newest" order.
+  {
+    slug: "austin-motel",
+    title: "Austin Motel",
+    subject: "sign",
+    orientation: "portrait",
+    edition: 6,
+    stock: 6,
+    added: "2026-10-05",
+    palette: ["#eef1ec", "#9fb46a", "#d93a33", "#c9a27e"],
+    alt: "Watercolor of the red Austin Motel sign with trees behind it",
+    story: "Austin's most iconic hotel.",
+    photo: "images/austin-motel.jpg",
+  },
+  {
+    slug: "de-nada",
+    title: "De Nada",
+    subject: "gazebo",
+    orientation: "portrait",
+    edition: 6,
+    stock: 6,
+    added: "2026-10-04",
+    palette: ["#f4f4f2", "#c9ccd0", "#9aa0a8", "#6b7079"],
+    alt: "Watercolor of a domed stone gazebo with columns",
+    story: "", // TODO: description from Priya
+    photo: "images/de-nada.jpg",
   },
 ];
 
