@@ -48,8 +48,8 @@ const PAYMENT = { venmo: "@Pkodenkandath", zelle: "508-333-4830" };
 // Every print comes in these two sizes, at these prices. Landscape pieces
 // print the same sizes turned sideways (7 × 5 and 10 × 8).
 const PRINT_SIZES = [
-  { id: "5x7", w: 5, h: 7, price: 10 },
-  { id: "8x10", w: 8, h: 10, price: 20 },
+  { id: "5x7", w: 5, h: 7, price: 8 },
+  { id: "8x10", w: 8, h: 10, price: 18 },
 ];
 
 // All commissions are 5 × 7 in originals. A type with one price shows that

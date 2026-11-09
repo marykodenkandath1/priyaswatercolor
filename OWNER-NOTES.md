@@ -8,7 +8,7 @@ Plain-language notes for keeping the site up to date. Almost everything lives in
 Buyers add prints to the cart and place an order on the checkout page (no payment there).
 They get an order number like **PW-4821**, Priya's Venmo (@Pkodenkandath) and Zelle
 (508-333-4830) details and a **Pay on Venmo** button, and are asked to put the number in
-the payment note. Priya gets an email "New order PW-4821 — $30" and a row in the
+the payment note. Priya gets an email "New order PW-4821 — $28" and a row in the
 **Orders** tab of her sheet.
 
 For each order:

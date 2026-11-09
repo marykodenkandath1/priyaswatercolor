@@ -27,7 +27,7 @@ Then open http://localhost:8765.
 ## Decisions from Priya
 
 - **Shop:** prints of Martini, Flatirons, UT Stadium and Oysters, 6 of each (both sizes
-  together). Every print comes in 5 × 7 ($10) or 8 × 10 ($20).
+  together). Every print comes in 5 × 7 ($8) or 8 × 10 ($18).
 - **Commissions:** 5 × 7 originals only, $20–$50 depending on detail (house, wedding
   venue or special place, something else). Ready about 2 weeks after the form is sent, no deposit.
 - **Local drop-off:** the form asks where the buyer is located. For Austin or Colorado it

@@ -827,7 +827,7 @@
         <a class="btn btn-block btn-venmo" href="${esc(VENMO_URL)}" target="_blank" rel="noopener">Pay on Venmo</a>
         <p class="fine">${
           shipped
-            ? "Your prints ship within 7 business days of payment, and you'll get a tracking link by email when your order is on its way."
+            ? "Your prints ship within 7 business days of payment."
             : "Priya will email you to arrange the drop-off once payment is received."
         }</p>
       </div>

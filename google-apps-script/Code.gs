@@ -6,7 +6,7 @@
  * order (kind: "order") and commission request (kind: "commission") here as JSON.
  *
  * Print orders: adds a row to the "Orders" tab and emails NOTIFY_EMAIL
- * ("New order PW-4821 — $30"). Buyers pay by Venmo or Zelle afterwards.
+ * ("New order PW-4821 — $28"). Buyers pay by Venmo or Zelle afterwards.
  *
  * Commission requests:
  *   1. saves the reference photos to a private Google Drive folder,
