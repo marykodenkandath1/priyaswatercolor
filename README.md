@@ -48,6 +48,7 @@ Then open http://localhost:8765.
 | `shop.html`, `product.html?p=<slug>` | Print grid and print detail (photo with zoom) |
 | `cart.html`, `checkout.html`, `order-confirmed.html` | Cart, order form, and order number, Venmo and Zelle details and the Pay on Venmo button |
 | `commissions.html`, `commission-thanks.html` | Commissions, request form and confirmation |
+| `previous-work.html` | Previous work gallery (photos listed in `PREVIOUS_WORK` in `js/data.js`) |
 | `about.html`, `faq.html` | About Priya; FAQ and policies |
 
 Each HTML page includes the shared header and footer through `js/app.js`, so the

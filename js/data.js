@@ -164,7 +164,7 @@ const PRINT_DETAILS = {
   year: 2026,
 };
 
-// "Previous work" gallery wall on the Commissions page (and the two small
+// "Previous work" page gallery (and the two small
 // pictures in the homepage Commissions section, which use the first two).
 //
 // TO ADD A PHOTO: put the file in images/work/ and add a line below, e.g.
@@ -178,22 +178,20 @@ const PRINT_DETAILS = {
 //          "50% 50%"). Lower y moves the crop up, e.g. "50% 35%".
 //   zoom   optional, e.g. 1.15 zooms in 15% to cut a table or background out
 //          of a phone photo.
-//   size   optional "lg", "md" or "sm". Left out, sizes rotate so big and
-//          small pieces are spread across the wall.
 //   title  optional name, read out by screen readers (no caption is shown).
 //   frame  optional "navy" or "pink". Left out, the frame colors alternate.
 //
 // Photos are Priya's phone shots, cropped and straightened to just the paper
 // (originals are in the pastcommissions/ folder, which isn't published).
 const PREVIOUS_WORK = [
-  { src: "images/work/yellow-house.jpg", title: "House in the trees", shape: "landscape", ratio: 1599 / 1028, size: "lg" },
-  { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600, size: "sm" },
-  { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876, size: "md" },
-  { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685, size: "sm" },
-  { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600, size: "md" },
-  { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179, size: "lg" },
-  { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "portrait", ratio: 1109 / 1203, size: "md" },
-  { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109, size: "sm" },
-  { src: "images/work/sea-turtle.jpg", title: "Sea turtle", shape: "square", focus: "50% 45%", size: "sm" },
-  { src: "images/work/white-house.jpg", title: "Colonial house", shape: "landscape", ratio: 1225 / 942, size: "md" },
+  { src: "images/work/yellow-house.jpg", title: "House in the trees", shape: "landscape", ratio: 1599 / 1028 },
+  { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600 },
+  { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876 },
+  { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685 },
+  { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600 },
+  { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179 },
+  { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "portrait", ratio: 1109 / 1203 },
+  { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109 },
+  { src: "images/work/sea-turtle.jpg", title: "Sea turtle", shape: "square", focus: "50% 45%" },
+  { src: "images/work/white-house.jpg", title: "Colonial house", shape: "landscape", ratio: 1225 / 942 },
 ];

@@ -278,7 +278,8 @@
 
   const NAV = [
     { href: "shop.html", label: "Shop prints", page: "shop" },
-    { href: "commissions.html", label: "Commissions", page: "commissions", sub: [{ href: "commissions.html#previous-work", label: "Previous work" }] },
+    { href: "commissions.html", label: "Commissions", page: "commissions" },
+    { href: "previous-work.html", label: "Previous work", page: "previous-work" },
     { href: "about.html", label: "About", page: "about" },
     { href: "faq.html", label: "FAQ", page: "faq" },
     { href: `mailto:${SITE.email}`, label: "Contact", page: "contact" },
@@ -311,9 +312,7 @@
             <ul id="nav-list" class="nav-list">
               ${NAV.map(
                 (n) =>
-                  `<li${n.sub ? ' class="has-sub"' : ""}><a href="${n.href}"${n.page === page || (page === "product" && n.page === "shop") ? ' aria-current="page"' : ""}>${n.label}</a>${
-                    n.sub ? `<ul class="nav-sub">${n.sub.map((s) => `<li><a href="${s.href}">${s.label}</a></li>`).join("")}</ul>` : ""
-                  }</li>`
+                  `<li><a href="${n.href}"${n.page === page || (page === "product" && n.page === "shop") ? ' aria-current="page"' : ""}>${n.label}</a></li>`
               ).join("")}
             </ul>
           </nav>
@@ -329,7 +328,7 @@
         toggle.setAttribute("aria-expanded", String(open));
         header.classList.toggle("nav-open", open);
       });
-      // Close the phone menu after a link is chosen (e.g. jumping to Previous work).
+      // Close the phone menu after a link is chosen.
       $("#nav-list", header).addEventListener("click", (e) => {
         if (!e.target.closest("a")) return;
         toggle.setAttribute("aria-expanded", "false");
@@ -402,7 +401,7 @@
     $("[data-featured]").innerHTML = PRODUCTS.slice().sort(newestFirst).map((p) => card(p)).join("");
 
     $("[data-commission-art]").innerHTML = PREVIOUS_WORK.slice(0, 2)
-      .map((w, i) => `<a class="mat mat-small" href="commissions.html#previous-work"><div class="mat-inner">${workArt(w, i, { fit: true })}</div></a>`)
+      .map((w, i) => `<a class="mat mat-small" href="previous-work.html"><div class="mat-inner">${workArt(w, i, { fit: true })}</div></a>`)
       .join("");
 
   };
@@ -870,8 +869,6 @@
    * ---------------------------------------------------------------- */
 
   const SHAPE_RATIOS = { portrait: 3 / 4, landscape: 4 / 3, square: 1, round: 1, oval: 4 / 5 };
-  // Used in turn when a piece has no `size`, so big and small pieces alternate.
-  const SIZE_CYCLE = ["lg", "sm", "md", "sm", "md", "lg", "sm", "md"];
   const STAND_IN_PALETTES = [
     ["#e8f0f4", "#f2e6d0", "#b5523b", "#5f8a55"],
     ["#f4ecd8", "#a8c1dc", "#4f5d75", "#7aa060"],
@@ -904,56 +901,60 @@
 
   function renderGalleryWall(root) {
     if (!root) return;
-    root.innerHTML = PREVIOUS_WORK.map((w, i) => {
-      const size = w.size || SIZE_CYCLE[i % SIZE_CYCLE.length];
-      // Small, repeatable nudges so the spacing looks hung by hand, not gridded.
-      const r = rng(hash(`wall-${i}`));
-      const nudge = { top: Math.round(r() * 28), side: Math.round(r() * 18), align: ["start", "center", "end"][Math.floor(r() * 3)] };
-      return `
-      <li class="wall-item" data-size="${size}" style="--top:${nudge.top}px;--side:${nudge.side}px;justify-self:${nudge.align}">
-        <button type="button" class="work" data-work="${i}" aria-label="Enlarge ${esc(w.title || (w.src ? "commission photo" : "placeholder"))}">
-          <span class="${frameClass(w, i)}">${workArt(w, i)}</span>
-        </button>
-      </li>`;
-    }).join("");
+    const pieces = PREVIOUS_WORK.map((w, i) => ({ w, i, ratio: workRatio(w) }));
 
-    // Hang the pieces: each one goes where the wall is currently lowest (in
-    // 4px rows), so different shapes interlock and large pieces spread out.
-    // Phones use 2 columns; wider screens 12, with lg/md/sm spanning 4/3/2.
-    const fit = (cols) => {
-      const spans = cols > 2 ? { lg: 4, md: 3, sm: 2 } : { lg: 1, md: 1, sm: 1 };
-      const skyline = new Array(cols).fill(0);
-      $$(".wall-item", root).forEach((li) => {
-        const span = spans[li.dataset.size] || 1;
-        li.style.gridArea = `auto / span ${span}`;
-        const rows = Math.ceil(li.getBoundingClientRect().height / 4);
-        let best = 0, bestTop = Infinity;
-        for (let c = 0; c + span <= cols; c++) {
-          const top = Math.max(...skyline.slice(c, c + span));
-          if (top < bestTop) (bestTop = top), (best = c);
-        }
-        li.style.gridArea = `${bestTop + 1} / ${best + 1} / span ${rows} / span ${span}`;
-        skyline.fill(bestTop + rows, best, best + span);
-      });
-      return skyline.filter((h) => h > 0).length; // columns actually used
-    };
-    // If the pieces leave columns empty at the right, drop those columns so
-    // the wall fills its width, then hang the pieces again at the new size.
+    // Justified rows: every frame in a row is the same height, each row fills
+    // the wall's width exactly, and the gaps are all equal. Pieces stay in list order.
     const hang = () => {
-      root.style.gridTemplateColumns = "";
-      const cols = getComputedStyle(root).gridTemplateColumns.split(" ").length;
-      const used = fit(cols);
-      if (used < cols) {
-        root.style.gridTemplateColumns = `repeat(${used}, minmax(0, 1fr))`;
-        fit(used);
+      const width = root.clientWidth;
+      const phone = width < 600;
+      const gap = phone ? 12 : 22;
+      const edge = phone ? 5 + 8 : 7 + 14; // frame + mat on each side, matches --frame-w + --mat-pad
+      const target = phone ? 160 : 210;
+      root.style.setProperty("--frame-w", `${phone ? 5 : 7}px`);
+      root.style.setProperty("--mat-pad", `${phone ? 8 : 14}px`);
+      const heightFor = (row) =>
+        (width - row.length * 2 * edge - (row.length - 1) * gap) / row.reduce((n, p) => n + p.ratio, 0);
+
+      // Choose where rows break so that every row, the last one included,
+      // fills the width and row heights stay as close to the target as possible.
+      const n = pieces.length;
+      const best = [{ cost: 0, from: -1 }];
+      for (let j = 1; j <= n; j++) {
+        best[j] = { cost: Infinity, from: 0 };
+        for (let i = j - 1; i >= 0; i--) {
+          const h = heightFor(pieces.slice(i, j));
+          if (h < target / 2) break; // too many pieces for one row
+          const cost = best[i].cost + (h - target) ** 2;
+          if (cost < best[j].cost) best[j] = { cost, from: i };
+        }
       }
+      const rows = [];
+      for (let j = n; j > 0; j = best[j].from) {
+        const row = pieces.slice(best[j].from, j);
+        rows.unshift({ pieces: row, height: heightFor(row) });
+      }
+
+      root.innerHTML = rows
+        .map(
+          (r) => `
+        <div class="wall-row" style="gap:${gap}px;margin-bottom:${gap}px">${r.pieces
+            .map(
+              ({ w, i, ratio }) => `
+          <button type="button" class="work" data-work="${i}" style="width:${(r.height * ratio + 2 * edge).toFixed(2)}px" aria-label="Enlarge ${esc(w.title || (w.src ? "commission photo" : "placeholder"))}">
+            <span class="${frameClass(w, i)}">${workArt(w, i)}</span>
+          </button>`
+            )
+            .join("")}
+        </div>`
+        )
+        .join("");
     };
     hang();
     let lastWidth = root.clientWidth;
     window.addEventListener("resize", () => {
       if (root.clientWidth !== lastWidth) (lastWidth = root.clientWidth), hang();
     });
-    if (document.fonts) document.fonts.ready.then(hang);
 
     root.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-work]");
@@ -964,6 +965,10 @@
     });
   }
 
+  pages["previous-work"] = function () {
+    renderGalleryWall($("[data-gallery]"));
+  };
+
   /* ---------------------------------------------------------------- *
    * Commissions (5 × 7 originals) and request form (F1–F13)
    * ---------------------------------------------------------------- */
@@ -973,8 +978,6 @@
       (t) => `<tr><th scope="row">${esc(t.label)}</th><td>${commissionPrice(t)}${t.price ? "" : ' <span class="muted">depending on detail</span>'}</td></tr>`
     ).join("");
     $$("[data-commission-size]").forEach((el) => (el.textContent = COMMISSION_SIZE));
-
-    renderGalleryWall($("[data-gallery]"));
 
     $$("[data-turnaround]").forEach((el) => (el.textContent = SITE.commissions.turnaround));
 
