@@ -57,8 +57,8 @@ const PRINT_SIZES = [
 const COMMISSION_SIZE = "5 × 7 in";
 const COMMISSION_TYPES = [
   { label: "House", min: 20, max: 50 },
-  { label: "Wedding venue or special place", min: 20, max: 50 },
-  { label: "Something else", min: 20, max: 50 },
+  { label: "Custom birthday/greeting card", min: 10, max: 20 },
+  { label: "Something else", min: 10, max: 50 },
 ];
 
 // "Where are you located?" on the house-portrait form. Picking a place with
@@ -164,11 +164,35 @@ const PRINT_DETAILS = {
   year: 2026,
 };
 
-// Past house commissions shown as examples (5 × 7 originals). PLACEHOLDER: real ones need
-// clients' permission; add a photo: "images/..." to each.
-const COMMISSION_EXAMPLES = [
-  { slug: "ex-maple", title: "The house on Maple Street", w: 5, h: 7, subject: "house", palette: ["#e8f0f4", "#f2e6d0", "#b5523b", "#5f8a55"], photo: "" },
-  { slug: "ex-bungalow", title: "A blue bungalow", w: 5, h: 7, subject: "house", palette: ["#f4ecd8", "#a8c1dc", "#4f5d75", "#7aa060"], photo: "" },
-  { slug: "ex-farmhouse", title: "The family farmhouse", w: 5, h: 7, subject: "house", palette: ["#eef3e6", "#fbfaf5", "#8a3f35", "#6c8f4d"], photo: "" },
-  { slug: "ex-brownstone", title: "A first home", w: 5, h: 7, subject: "house", palette: ["#efe4dc", "#c9876b", "#3d4a5c", "#7f9a5d"], photo: "" },
+// "Previous work" gallery wall on the Commissions page (and the two small
+// pictures in the homepage Commissions section, which use the first two).
+//
+// TO ADD A PHOTO: put the file in images/work/ and add a line below, e.g.
+//   { src: "images/work/smith-house.jpg", title: "The Smith house", shape: "portrait" },
+// Only `src` and `shape` are needed. The list order is the wall order.
+//
+//   shape  "portrait" (3:4), "landscape" (4:3), "square", "round" (circle) or
+//          "oval" (upright oval). The photo is cropped to this shape.
+//   ratio  optional exact width ÷ height of the painting, e.g. 5 / 7 for a 5 × 7.
+//   focus  optional point to keep in view when cropping, "x% y%" (default
+//          "50% 50%"). Lower y moves the crop up, e.g. "50% 35%".
+//   zoom   optional, e.g. 1.15 zooms in 15% to cut a table or background out
+//          of a phone photo.
+//   size   optional "lg", "md" or "sm". Left out, sizes rotate so big and
+//          small pieces are spread across the wall.
+//   title  optional caption, shown under the piece and in the enlarged view.
+//
+// PLACEHOLDER: the entries without a `src` show generated stand-ins until
+// Priya's photos arrive. Replace them (or delete them) as real photos go in.
+const PREVIOUS_WORK = [
+  { src: "", shape: "landscape", size: "lg" },
+  { src: "", shape: "round", size: "sm" },
+  { src: "", shape: "portrait", ratio: 5 / 7 },
+  { src: "", shape: "square", size: "sm" },
+  { src: "", shape: "oval" },
+  { src: "", shape: "portrait", size: "lg" },
+  { src: "", shape: "landscape", size: "sm" },
+  { src: "", shape: "square" },
+  { src: "", shape: "portrait", ratio: 5 / 7, size: "sm" },
+  { src: "", shape: "landscape", ratio: 7 / 5, size: "md" },
 ];

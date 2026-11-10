@@ -17,7 +17,7 @@
   const cm = (inches) => (Math.round(inches * 2.54 * 10) / 10).toString();
 
   // Prints: every piece comes in the PRINT_SIZES, turned sideways for landscape work.
-  // p.w / p.h give the artwork's shape for the images (examples set them directly).
+  // p.w / p.h give the artwork's shape for the images.
   PRODUCTS.forEach((p) => Object.assign(p, p.orientation === "landscape" ? { w: 10, h: 8 } : { w: 8, h: 10 }));
   const findSize = (id) => PRINT_SIZES.find((s) => s.id === id);
   const printDims = (p, s) => (p.orientation === "landscape" ? { w: s.h, h: s.w } : { w: s.w, h: s.h });
@@ -278,7 +278,7 @@
 
   const NAV = [
     { href: "shop.html", label: "Shop prints", page: "shop" },
-    { href: "commissions.html", label: "Commissions", page: "commissions" },
+    { href: "commissions.html", label: "Commissions", page: "commissions", sub: [{ href: "commissions.html#previous-work", label: "Previous work" }] },
     { href: "about.html", label: "About", page: "about" },
     { href: "faq.html", label: "FAQ", page: "faq" },
     { href: `mailto:${SITE.email}`, label: "Contact", page: "contact" },
@@ -311,7 +311,9 @@
             <ul id="nav-list" class="nav-list">
               ${NAV.map(
                 (n) =>
-                  `<li><a href="${n.href}"${n.page === page || (page === "product" && n.page === "shop") ? ' aria-current="page"' : ""}>${n.label}</a></li>`
+                  `<li${n.sub ? ' class="has-sub"' : ""}><a href="${n.href}"${n.page === page || (page === "product" && n.page === "shop") ? ' aria-current="page"' : ""}>${n.label}</a>${
+                    n.sub ? `<ul class="nav-sub">${n.sub.map((s) => `<li><a href="${s.href}">${s.label}</a></li>`).join("")}</ul>` : ""
+                  }</li>`
               ).join("")}
             </ul>
           </nav>
@@ -326,6 +328,12 @@
         const open = toggle.getAttribute("aria-expanded") !== "true";
         toggle.setAttribute("aria-expanded", String(open));
         header.classList.toggle("nav-open", open);
+      });
+      // Close the phone menu after a link is chosen (e.g. jumping to Previous work).
+      $("#nav-list", header).addEventListener("click", (e) => {
+        if (!e.target.closest("a")) return;
+        toggle.setAttribute("aria-expanded", "false");
+        header.classList.remove("nav-open");
       });
     }
 
@@ -393,8 +401,8 @@
 
     $("[data-featured]").innerHTML = PRODUCTS.slice().sort(newestFirst).map((p) => card(p)).join("");
 
-    $("[data-commission-art]").innerHTML = COMMISSION_EXAMPLES.slice(0, 2)
-      .map((e) => `<div class="mat mat-small"><div class="mat-inner">${artImg(e, { alt: e.title })}</div></div>`)
+    $("[data-commission-art]").innerHTML = PREVIOUS_WORK.slice(0, 2)
+      .map((w, i) => `<a class="mat mat-small" href="commissions.html#previous-work"><div class="mat-inner">${workArt(w, i, { fit: true })}</div></a>`)
       .join("");
 
   };
@@ -545,6 +553,11 @@
   };
 
   function openLightbox(p) {
+    showLightbox(`<img src="${artSrc(p)}" alt="${esc(p.alt)}">`, `${p.title}, zoomed`);
+  }
+
+  // `content` is the enlarged picture's markup; `label` names the dialog.
+  function showLightbox(content, label, caption = "") {
     let dlg = $("#lightbox");
     if (!dlg) {
       dlg = document.createElement("dialog");
@@ -555,12 +568,13 @@
         if (e.target === dlg) dlg.close();
       });
     }
-    dlg.setAttribute("aria-label", `${p.title}, zoomed`);
+    dlg.setAttribute("aria-label", label);
     dlg.innerHTML = `
       <div class="lightbox-inner">
-        <img src="${artSrc(p)}" alt="${esc(p.alt)}">
+        ${content}
         <span class="watermark" aria-hidden="true">© Priya's Watercolors</span>
       </div>
+      ${caption ? `<p class="lightbox-caption">${esc(caption)}</p>` : ""}
       <form method="dialog"><button class="lightbox-close" aria-label="Close zoomed view">×</button></form>`;
     dlg.showModal();
   }
@@ -853,6 +867,102 @@
   };
 
   /* ---------------------------------------------------------------- *
+   * "Previous work" gallery wall (PREVIOUS_WORK in data.js)
+   * ---------------------------------------------------------------- */
+
+  const SHAPE_RATIOS = { portrait: 3 / 4, landscape: 4 / 3, square: 1, round: 1, oval: 4 / 5 };
+  // Used in turn when a piece has no `size`, so big and small pieces alternate.
+  const SIZE_CYCLE = ["lg", "sm", "md", "sm", "md", "lg", "sm", "md"];
+  const STAND_IN_PALETTES = [
+    ["#e8f0f4", "#f2e6d0", "#b5523b", "#5f8a55"],
+    ["#f4ecd8", "#a8c1dc", "#4f5d75", "#7aa060"],
+    ["#eef3e6", "#fbfaf5", "#8a3f35", "#6c8f4d"],
+    ["#efe4dc", "#c9876b", "#3d4a5c", "#7f9a5d"],
+  ];
+
+  const workRatio = (w) => w.ratio || SHAPE_RATIOS[w.shape] || 1;
+  const workAlt = (w) => (w.src ? `Watercolor commission by Priya${w.title ? `: ${w.title}` : ""}` : "Placeholder for a commission photo");
+
+  // The painting, cropped to its shape. Real photos use object-fit/position
+  // plus an optional zoom to trim the table or background around the paper.
+  // `fit` sizes it to sit inside a square mat (the homepage pair).
+  function workArt(w, i, { fit = false } = {}) {
+    const ratio = workRatio(w);
+    let src = w.src;
+    if (!src) {
+      const stand = { slug: `work-${i}`, w: 1000, h: Math.round(1000 / ratio), subject: "house", palette: STAND_IN_PALETTES[i % STAND_IN_PALETTES.length] };
+      src = artSrc(stand);
+    }
+    const focus = w.focus || "50% 50%";
+    const zoom = w.zoom && w.zoom !== 1 ? `transform:scale(${w.zoom});transform-origin:${focus};` : "";
+    return `<span class="work-window shape-${esc(w.shape || "square")}" style="aspect-ratio:${ratio}${fit ? `;width:${Math.min(1, ratio) * 100}%` : ""}">` +
+      `<img src="${esc(src)}" alt="${esc(workAlt(w))}" loading="lazy" decoding="async" style="object-position:${esc(focus)};${zoom}"></span>`;
+  }
+
+  function renderGalleryWall(root) {
+    if (!root) return;
+    root.innerHTML = PREVIOUS_WORK.map((w, i) => {
+      const size = w.size || SIZE_CYCLE[i % SIZE_CYCLE.length];
+      // Small, repeatable nudges so the spacing looks hung by hand, not gridded.
+      const r = rng(hash(`wall-${i}`));
+      const nudge = { top: Math.round(r() * 28), side: Math.round(r() * 18), align: ["start", "center", "end"][Math.floor(r() * 3)] };
+      return `
+      <li class="wall-item" data-size="${size}" style="--top:${nudge.top}px;--side:${nudge.side}px;justify-self:${nudge.align}">
+        <button type="button" class="work" data-work="${i}" aria-label="Enlarge ${esc(w.title || (w.src ? "commission photo" : "placeholder"))}">
+          <span class="work-frame${w.shape === "round" || w.shape === "oval" ? " work-frame-round" : ""}">${workArt(w, i)}</span>
+          ${w.title ? `<span class="work-title">${esc(w.title)}</span>` : ""}
+        </button>
+      </li>`;
+    }).join("");
+
+    // Hang the pieces: each one goes where the wall is currently lowest (in
+    // 4px rows), so different shapes interlock and large pieces spread out.
+    // Phones use 2 columns; wider screens 12, with lg/md/sm spanning 4/3/2.
+    const fit = (cols) => {
+      const spans = cols > 2 ? { lg: 4, md: 3, sm: 2 } : { lg: 1, md: 1, sm: 1 };
+      const skyline = new Array(cols).fill(0);
+      $$(".wall-item", root).forEach((li) => {
+        const span = spans[li.dataset.size] || 1;
+        li.style.gridArea = `auto / span ${span}`;
+        const rows = Math.ceil(li.getBoundingClientRect().height / 4);
+        let best = 0, bestTop = Infinity;
+        for (let c = 0; c + span <= cols; c++) {
+          const top = Math.max(...skyline.slice(c, c + span));
+          if (top < bestTop) (bestTop = top), (best = c);
+        }
+        li.style.gridArea = `${bestTop + 1} / ${best + 1} / span ${rows} / span ${span}`;
+        skyline.fill(bestTop + rows, best, best + span);
+      });
+      return skyline.filter((h) => h > 0).length; // columns actually used
+    };
+    // If the pieces leave columns empty at the right, drop those columns so
+    // the wall fills its width, then hang the pieces again at the new size.
+    const hang = () => {
+      root.style.gridTemplateColumns = "";
+      const cols = getComputedStyle(root).gridTemplateColumns.split(" ").length;
+      const used = fit(cols);
+      if (used < cols) {
+        root.style.gridTemplateColumns = `repeat(${used}, minmax(0, 1fr))`;
+        fit(used);
+      }
+    };
+    hang();
+    let lastWidth = root.clientWidth;
+    window.addEventListener("resize", () => {
+      if (root.clientWidth !== lastWidth) (lastWidth = root.clientWidth), hang();
+    });
+    if (document.fonts) document.fonts.ready.then(hang);
+
+    root.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-work]");
+      if (!btn) return;
+      const i = Number(btn.dataset.work);
+      const w = PREVIOUS_WORK[i];
+      showLightbox(`<span class="work-frame work-frame-large${w.shape === "round" || w.shape === "oval" ? " work-frame-round" : ""}" style="--ratio:${workRatio(w)}">${workArt(w, i)}</span>`, w.title || "Previous work, enlarged", w.title);
+    });
+  }
+
+  /* ---------------------------------------------------------------- *
    * Commissions (5 × 7 originals) and request form (F1–F13)
    * ---------------------------------------------------------------- */
 
@@ -862,14 +972,7 @@
     ).join("");
     $$("[data-commission-size]").forEach((el) => (el.textContent = COMMISSION_SIZE));
 
-    $("[data-examples]").innerHTML = COMMISSION_EXAMPLES.map(
-      (e) => `
-      <li class="example">
-        <div class="mat"><div class="mat-inner">${artImg(e, { alt: `Watercolor house commission: ${e.title}` })}</div></div>
-        <p class="card-title">${esc(e.title)}</p>
-        <p class="card-meta">House · ${e.w} × ${e.h} in original</p>
-      </li>`
-    ).join("");
+    renderGalleryWall($("[data-gallery]"));
 
     $$("[data-turnaround]").forEach((el) => (el.textContent = SITE.commissions.turnaround));
 

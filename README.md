@@ -28,8 +28,8 @@ Then open http://localhost:8765.
 
 - **Shop:** prints of Martini, Flatirons, UT Stadium, Oysters, Austin Motel and De Nada, 6 of each (both sizes
   together). Every print comes in 5 × 7 ($8) or 8 × 10 ($18).
-- **Commissions:** 5 × 7 originals only, $20–$50 depending on detail (house, wedding
-  venue or special place, something else). Ready about 2 weeks after the form is sent, no deposit.
+- **Commissions:** 5 × 7 originals only, $10–$50 depending on detail (house $20–$50,
+  custom birthday/greeting card $10–$20, something else $10–$50). Ready about 2 weeks after the form is sent, no deposit.
 - **Local drop-off:** the form asks where the buyer is located. For Austin or Colorado it
   also asks whether they'd be open to Priya dropping the painting off in person.
 - **Shipping:** US only. **Instagram:** @priyaswatercolors.
