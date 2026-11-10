@@ -186,7 +186,7 @@ const PRINT_DETAILS = {
 // (originals are in the pastcommissions/ folder, which isn't published).
 const PREVIOUS_WORK = [
   { src: "images/work/yellow-house.jpg", title: "House in the trees", shape: "landscape", ratio: 1599 / 1028, size: "lg" },
-  { src: "images/work/starfish.jpg", title: "Starfish", shape: "round", focus: "50% 44%", size: "sm" },
+  { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600, size: "sm" },
   { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876, size: "md" },
   { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685, size: "sm" },
   { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600, size: "md" },
