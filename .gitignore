@@ -4,3 +4,4 @@ PRD*.pdf
 .vercel
 .env*
 images/*.pdf
+pastcommissions/

@@ -182,17 +182,17 @@ const PRINT_DETAILS = {
 //          small pieces are spread across the wall.
 //   title  optional caption, shown under the piece and in the enlarged view.
 //
-// PLACEHOLDER: the entries without a `src` show generated stand-ins until
-// Priya's photos arrive. Replace them (or delete them) as real photos go in.
+// Photos are Priya's phone shots, cropped and straightened to just the paper
+// (originals are in the pastcommissions/ folder, which isn't published).
 const PREVIOUS_WORK = [
-  { src: "", shape: "landscape", size: "lg" },
-  { src: "", shape: "round", size: "sm" },
-  { src: "", shape: "portrait", ratio: 5 / 7 },
-  { src: "", shape: "square", size: "sm" },
-  { src: "", shape: "oval" },
-  { src: "", shape: "portrait", size: "lg" },
-  { src: "", shape: "landscape", size: "sm" },
-  { src: "", shape: "square" },
-  { src: "", shape: "portrait", ratio: 5 / 7, size: "sm" },
-  { src: "", shape: "landscape", ratio: 7 / 5, size: "md" },
+  { src: "images/work/yellow-house.jpg", title: "House in the trees", shape: "landscape", ratio: 1599 / 1028, size: "lg" },
+  { src: "images/work/starfish.jpg", title: "Starfish", shape: "round", focus: "50% 44%", size: "sm" },
+  { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876, size: "md" },
+  { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685, size: "sm" },
+  { src: "images/work/old-well.jpg", title: "The Old Well", shape: "portrait", ratio: 1178 / 1600, size: "md" },
+  { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179, size: "lg" },
+  { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "oval", ratio: 0.9, focus: "60% 55%", zoom: 1.15, size: "md" },
+  { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109, size: "sm" },
+  { src: "images/work/sea-turtle.jpg", title: "Sea turtle", shape: "square", focus: "50% 45%", size: "sm" },
+  { src: "images/work/white-house.jpg", title: "Colonial house", shape: "landscape", ratio: 1225 / 942, size: "md" },
 ];
