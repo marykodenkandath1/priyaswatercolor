@@ -146,14 +146,14 @@ const PRODUCTS = [
   {
     slug: "de-nada",
     title: "De Nada",
-    subject: "gazebo",
+    subject: "drinks",
     orientation: "portrait",
     edition: 6,
     stock: 6,
     added: "2026-10-04",
-    palette: ["#f4f4f2", "#c9ccd0", "#9aa0a8", "#6b7079"],
-    alt: "Watercolor of a domed stone gazebo with columns",
-    story: "", // TODO: description from Priya
+    palette: ["#fbf3f4", "#f2a7bd", "#e0457b", "#b9cf8f"],
+    alt: "Watercolor of two pink frozen drinks with straws and lime wedges, one cup reading De Nada",
+    story: "drink for a good time!",
     photo: "images/de-nada.jpg",
   },
 ];
@@ -189,7 +189,7 @@ const PREVIOUS_WORK = [
   { src: "images/work/starfish.jpg", title: "Starfish", shape: "round", focus: "50% 44%", size: "sm" },
   { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876, size: "md" },
   { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685, size: "sm" },
-  { src: "images/work/old-well.jpg", title: "The Old Well", shape: "portrait", ratio: 1178 / 1600, size: "md" },
+  { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600, size: "md" },
   { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179, size: "lg" },
   { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "oval", ratio: 0.9, focus: "60% 55%", zoom: 1.15, size: "md" },
   { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109, size: "sm" },
