@@ -468,7 +468,8 @@ dialog::backdrop { background: rgba(28, 27, 33, 0.82); }
 .work { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; text-align: center; color: inherit; }
 .work-frame {
   display: block; padding: clamp(8px, 7%, 20px);
-  background: var(--mat); box-shadow: 0 0 0 1px var(--line), 0 2px 4px rgba(38, 48, 74, 0.08), 0 12px 26px rgba(38, 48, 74, 0.14);
+  background: var(--mat); border: clamp(5px, 0.6vw, 8px) solid var(--frame, var(--ink));
+  box-shadow: 0 0 0 1px var(--line), 0 2px 4px rgba(38, 48, 74, 0.08), 0 12px 26px rgba(38, 48, 74, 0.14);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .work:hover .work-frame { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--line), 0 4px 8px rgba(38, 48, 74, 0.1), 0 18px 34px rgba(38, 48, 74, 0.18); }
@@ -476,9 +477,9 @@ dialog::backdrop { background: rgba(28, 27, 33, 0.82); }
 .work-window { display: block; width: 100%; overflow: hidden; background: #f4efe6; }
 .work-window img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .shape-round .work-window, .work-window.shape-round, .work-window.shape-oval { border-radius: 50%; }
-.work-title { display: block; margin-top: 10px; font-family: var(--display); font-style: italic; font-size: 0.95rem; color: var(--muted); }
+.frame-navy { --frame: var(--ink); }
+.frame-pink { --frame: #e4a0a6; }
 .work-frame-large { width: min(88vw, calc(78vh * var(--ratio))); }
-.lightbox-caption { margin: 10px 0 0; text-align: center; color: #fff; font-family: var(--display); font-style: italic; }
 .pair .mat { display: block; }
 .pair .work-window { box-shadow: var(--shadow-art); }
 

@@ -557,7 +557,7 @@
   }
 
   // `content` is the enlarged picture's markup; `label` names the dialog.
-  function showLightbox(content, label, caption = "") {
+  function showLightbox(content, label) {
     let dlg = $("#lightbox");
     if (!dlg) {
       dlg = document.createElement("dialog");
@@ -574,7 +574,6 @@
         ${content}
         <span class="watermark" aria-hidden="true">© Priya's Watercolors</span>
       </div>
-      ${caption ? `<p class="lightbox-caption">${esc(caption)}</p>` : ""}
       <form method="dialog"><button class="lightbox-close" aria-label="Close zoomed view">×</button></form>`;
     dlg.showModal();
   }
@@ -899,6 +898,10 @@
       `<img src="${esc(src)}" alt="${esc(workAlt(w))}" loading="lazy" decoding="async" style="object-position:${esc(focus)};${zoom}"></span>`;
   }
 
+  // Navy and pink frames, alternating unless a piece sets `frame`.
+  const frameClass = (w, i) =>
+    `work-frame frame-${w.frame || (i % 2 ? "pink" : "navy")}${w.shape === "round" || w.shape === "oval" ? " work-frame-round" : ""}`;
+
   function renderGalleryWall(root) {
     if (!root) return;
     root.innerHTML = PREVIOUS_WORK.map((w, i) => {
@@ -909,8 +912,7 @@
       return `
       <li class="wall-item" data-size="${size}" style="--top:${nudge.top}px;--side:${nudge.side}px;justify-self:${nudge.align}">
         <button type="button" class="work" data-work="${i}" aria-label="Enlarge ${esc(w.title || (w.src ? "commission photo" : "placeholder"))}">
-          <span class="work-frame${w.shape === "round" || w.shape === "oval" ? " work-frame-round" : ""}">${workArt(w, i)}</span>
-          ${w.title ? `<span class="work-title">${esc(w.title)}</span>` : ""}
+          <span class="${frameClass(w, i)}">${workArt(w, i)}</span>
         </button>
       </li>`;
     }).join("");
@@ -958,7 +960,7 @@
       if (!btn) return;
       const i = Number(btn.dataset.work);
       const w = PREVIOUS_WORK[i];
-      showLightbox(`<span class="work-frame work-frame-large${w.shape === "round" || w.shape === "oval" ? " work-frame-round" : ""}" style="--ratio:${workRatio(w)}">${workArt(w, i)}</span>`, w.title || "Previous work, enlarged", w.title);
+      showLightbox(`<span class="${frameClass(w, i)} work-frame-large" style="--ratio:${workRatio(w)}">${workArt(w, i)}</span>`, w.title || "Previous work, enlarged");
     });
   }
 

@@ -180,7 +180,8 @@ const PRINT_DETAILS = {
 //          of a phone photo.
 //   size   optional "lg", "md" or "sm". Left out, sizes rotate so big and
 //          small pieces are spread across the wall.
-//   title  optional caption, shown under the piece and in the enlarged view.
+//   title  optional name, read out by screen readers (no caption is shown).
+//   frame  optional "navy" or "pink". Left out, the frame colors alternate.
 //
 // Photos are Priya's phone shots, cropped and straightened to just the paper
 // (originals are in the pastcommissions/ folder, which isn't published).
@@ -191,7 +192,7 @@ const PREVIOUS_WORK = [
   { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685, size: "sm" },
   { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600, size: "md" },
   { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179, size: "lg" },
-  { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "oval", ratio: 0.9, focus: "60% 55%", zoom: 1.15, size: "md" },
+  { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "portrait", ratio: 1109 / 1203, size: "md" },
   { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109, size: "sm" },
   { src: "images/work/sea-turtle.jpg", title: "Sea turtle", shape: "square", focus: "50% 45%", size: "sm" },
   { src: "images/work/white-house.jpg", title: "Colonial house", shape: "landscape", ratio: 1225 / 942, size: "md" },
