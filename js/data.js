@@ -188,7 +188,7 @@ const PREVIOUS_WORK = [
   { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600 },
   { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876 },
   { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 953 / 685 },
-  { src: "images/work/oldwell.jpg", title: "The Old Well", shape: "portrait", ratio: 1207 / 1600 },
+  { src: "images/work/old-well.jpg", title: "The Old Well", shape: "portrait", ratio: 1178 / 1600 },
   { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1601 / 1179 },
   { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "portrait", ratio: 1109 / 1203 },
   { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109 },
