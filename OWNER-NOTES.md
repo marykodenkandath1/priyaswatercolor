@@ -116,4 +116,3 @@ Details are in `images/README.md`.
 ## Before launch
 
 - Replace every `PLACEHOLDER` in `js/data.js`.
-- Remove the "Prototype" bar at the top of the site (in `renderChrome`, `js/app.js`).

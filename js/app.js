@@ -301,7 +301,6 @@
     const header = $("[data-site-header]");
     if (header) {
       header.innerHTML = `
-        <div class="proto-bar">Prototype: photos, print details and some copy are placeholders.</div>
         <div class="gingham gingham-band" aria-hidden="true"></div>
         <div class="wrap header-inner">
           <a class="wordmark" href="index.html">Priya's <span>Watercolors</span></a>

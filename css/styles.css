@@ -128,11 +128,6 @@ ul, ol { margin: 0; padding: 0; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
 /* Header */
-.proto-bar {
-  background: var(--ink); color: #f6efe4;
-  font-size: 0.8rem; text-align: center;
-  padding: 6px var(--gutter);
-}
 .site-header {
   position: sticky; top: 0; z-index: 20;
   background: rgba(255, 252, 246, 0.97);
