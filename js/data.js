@@ -22,7 +22,7 @@ const SITE = {
   formUrl: "https://script.google.com/macros/s/AKfycbxMdXYCGf-Su5s17pScjuuegLK9lAWmhvuN2qwg06BbBO_n4A-Jc50BxbCMAXUjWyEK/exec",
   instagram: "https://instagram.com/priyaswatercolors",
   instagramHandle: "@priyaswatercolors",
-  portraitPhoto: "", // PLACEHOLDER: photo of Priya, e.g. "images/priya.jpg"
+  portraitPhoto: "images/priya.jpg", // About page photo of Priya
 
   // F13: commission availability. Set open to false to close the form;
   // set bookedUntil (e.g. "March 1") to show a booked-until notice.
