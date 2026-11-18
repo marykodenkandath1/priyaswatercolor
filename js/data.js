@@ -185,13 +185,15 @@ const PRINT_DETAILS = {
 // (originals are in the pastcommissions/ folder, which isn't published).
 const PREVIOUS_WORK = [
   { src: "images/work/yellow-house.jpg", title: "House in the trees", shape: "landscape", ratio: 1599 / 1028 },
-  { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600 },
   { src: "images/work/aperol.jpg", title: "Aperol", shape: "portrait", ratio: 609 / 876 },
   { src: "images/work/taxi.jpg", title: "Taxi", shape: "landscape", ratio: 961 / 686 },
   { src: "images/work/old-well.jpg", title: "The Old Well", shape: "portrait", ratio: 1178 / 1600 },
+  { src: "images/work/starfish.jpg", title: "Starfish", shape: "portrait", ratio: 1203 / 1600 },
   { src: "images/work/gray-house.jpg", title: "Gray house", shape: "landscape", ratio: 1500 / 1104 },
   { src: "images/work/ballet.jpg", title: "Ballet slippers", shape: "portrait", ratio: 998 / 1600 },
   { src: "images/work/birthday-cards.jpg", title: "Birthday cards", shape: "portrait", ratio: 933 / 1109 },
+  { src: "images/work/bread.jpg", title: "Bread", shape: "landscape", ratio: 1600 / 952 },
   { src: "images/work/sea-turtle.jpg", title: "Sea turtle", shape: "portrait", ratio: 1153 / 1601 },
   { src: "images/work/white-house.jpg", title: "Colonial house", shape: "landscape", ratio: 1225 / 942 },
+  { src: "images/work/butter.jpg", title: "Butter", shape: "landscape", ratio: 1524 / 970 },
 ];
