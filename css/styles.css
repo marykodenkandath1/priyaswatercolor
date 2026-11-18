@@ -448,7 +448,7 @@ dialog::backdrop { background: rgba(28, 27, 33, 0.82); }
 .work:hover .work-frame { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--line), 0 4px 8px rgba(38, 48, 74, 0.1), 0 18px 34px rgba(38, 48, 74, 0.18); }
 .work-frame-round { border-radius: 50%; padding: clamp(10px, 9%, 24px); }
 .work-window { display: block; width: 100%; overflow: hidden; background: #f4efe6; }
-.work-window img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.work-window img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .shape-round .work-window, .work-window.shape-round, .work-window.shape-oval { border-radius: 50%; }
 .frame-navy { --frame: var(--ink); }
 .frame-pink { --frame: #e4a0a6; }

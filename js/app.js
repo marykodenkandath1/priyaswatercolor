@@ -400,8 +400,13 @@
 
     $("[data-featured]").innerHTML = PRODUCTS.slice().sort(newestFirst).map((p) => card(p)).join("");
 
-    $("[data-commission-art]").innerHTML = PREVIOUS_WORK.slice(0, 2)
-      .map((w, i) => `<a class="mat mat-small" href="previous-work.html"><div class="mat-inner">${workArt(w, i, { fit: true })}</div></a>`)
+    // The house and the Old Well, keeping each piece's gallery index for its frame color.
+    const pairTitles = ["House in the trees", "The Old Well"];
+    $("[data-commission-art]").innerHTML = pairTitles
+      .map((t) => PREVIOUS_WORK.findIndex((w) => w.title === t))
+      .filter((i) => i >= 0)
+      .map((i) => [PREVIOUS_WORK[i], i])
+      .map(([w, i]) => `<a class="mat mat-small" href="previous-work.html"><div class="mat-inner">${workArt(w, i, { fit: true })}</div></a>`)
       .join("");
 
   };
